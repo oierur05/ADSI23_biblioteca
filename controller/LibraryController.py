@@ -48,3 +48,81 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2])
 		else:
 			return None
+
+	# FOROAK
+
+	def getForoak(self, hitzGako):
+		# HAY QUE HACERLO
+		return
+
+	def foroaSortu(self, fIzena, eIzena, deskribapena):
+		# HAY QUE HACERLO
+		return
+
+	def komentatuForoan(self, testua, erabiltzaileID):
+		# HAY QUE HACERLO
+		return
+
+	def foroaIkusi(self, foroID):
+		# HAY QUE HACERLO
+		return
+
+	# LAGUNAK
+
+	def setLagunEskaera(self, igorleID, jasotzaileID):
+		# HAY QUE HACERLO
+		return
+
+	# ERRESERBAK
+
+	def getErreserbak(self, erabiltzaileID):
+		# HAY QUE HACERLO
+		return
+
+	# ERRESEINAK
+
+	def getErreseina(self, erreseinaID):
+		# HAY QUE HACERLO
+		return
+
+	def getErreseinak(self, erabiltzaileID):
+		# HAY QUE HACERLO
+		return
+
+	def erreseinaEguneratu(self, erreseinaID, puntuazioa, testua):
+		# HAY QUE HACERLO
+		return
+
+	# ADMINISTRATZAILE FUNTZIOAK
+
+	def liburuBerriaGehitu(self, portada, izenburua, urtea, idazlea, sinopsia, PDF):
+		# HAY QUE HACERLO
+		return
+
+	def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
+		# HAY QUE HACERLO
+		return
+
+	def erabiltzaileaEzabatu(self, eIzena):
+		# HAY QUE HACERLO
+		return
+
+	# ERABILTZAILEAK
+
+	def erabiltzaileBilatu(self, eIzena):
+		# HAY QUE HACERLO
+		return
+
+	# LIBURUAK
+
+	def getLiburuak(self, hitzGako):
+		# HAY QUE HACERLO
+		return
+
+	def liburuaBueltatu(self, liburuID, erabiltzaileID):
+		# HAY QUE HACERLO
+		return
+
+	def getLiburua(self, liburuID):
+		# HAY QUE HACERLO
+		return
