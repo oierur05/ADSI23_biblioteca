@@ -40,6 +40,16 @@ class User:
 	def delete_session(self, session_hash):
 		db.delete("DELETE FROM Session WHERE session_hash = ? AND user_id = ?", (session_hash, self.username))
 
+	def sortuSaioa(self):
+		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))
+		session_hash = hash_password(str(self.username)+str(now))
+		db.insert("INSERT INTO Session VALUES (?, ?, ?)", (session_hash, self.username, now))
+		return Session(session_hash, now)
+
 	def eskaeraKudeatu(self, onartuDa, erabiltzaileID):
-		# TODO
-		pass
+		if onartuDa:
+			db.update("UPDATE Laguna SET onartua = true WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+					  (self.username,erabiltzaileID,erabiltzaileID,self.username))
+		else:
+			db.delete("DELETE FROM Laguna WHERE onartua = false AND (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+					  (self.username,erabiltzaileID,erabiltzaileID,self.username))

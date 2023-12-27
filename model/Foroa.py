@@ -1,3 +1,9 @@
+import datetime
+from .Connection import Connection
+from .Mezua import Mezua
+
+db = Connection()
+
 class Foroa:
 	def __init__(self, foroID, erabiltzaileIzena, izena, deskribapena, sorreraData):
 		self.foroID = foroID
@@ -10,9 +16,10 @@ class Foroa:
 		return f"{self.foroID}:{self.izena}"
 
 	def getMezuak(self):
-		# TODO
-		pass
+		s = db.select("SELECT * from Mezua WHERE foroID = ?", (self.foroID))
+		return [Mezua(m[0], m[2], m[3]) for m in s]
 
 	def gehituMezua(self, eIzena, testua):
-		# TODO
-		pass
+		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))
+		db.insert("INSERT INTO Mezua VALUES (?, ?, ?, ?)", (eIzena, self.foroID, now, testua))
+		return Mezua(eIzena, now, testua)

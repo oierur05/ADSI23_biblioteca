@@ -1,3 +1,4 @@
+import datetime
 from .Connection import Connection
 from .Author import Author
 
@@ -27,6 +28,25 @@ class Book:
 	def __str__(self):
 		return f"{self.title} ({self.author})"
 
-	def erreserbatu(erabiltzaileID):
-		# HAY QUE HACERLO
-		return
+	def erreserbatu(self, erabiltzaileID):
+		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
+		if len(liburuIDLista) == 0:
+			return
+
+		liburuID = liburuIDLista[0][0]
+		now = datetime.datetime.now()
+		end = now + datetime.timedelta(days=14)
+		now = float(now.time().strftime("%Y%m%d%H%M%S.%f"))
+		end = float(end.time().strftime("%Y%m%d%H%M%S.%f"))
+
+		db.insert("INSERT INTO Erreserba VALUES (?, ?, ?, ?)", (liburuID, erabiltzaileID, now, end))
+
+	def bueltatu(self, erabiltzaileID):
+		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
+		if len(liburuIDLista) == 0:
+			return
+
+		liburuID = liburuIDLista[0][0]
+
+		db.delete("DELETE FROM Erreserba WHERE kopiaFisikoID = ? AND erabiltzaileIzena = ?",
+				  (liburuID,erabiltzaileID))

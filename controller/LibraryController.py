@@ -59,10 +59,6 @@ class LibraryController:
 		# HAY QUE HACERLO
 		return
 
-	def komentatuForoan(self, testua, erabiltzaileID):
-		# HAY QUE HACERLO
-		return
-
 	def foroaIkusi(self, foroID):
 		# HAY QUE HACERLO
 		return
@@ -116,10 +112,6 @@ class LibraryController:
 	# LIBURUAK
 
 	def getLiburuak(self, hitzGako):
-		# HAY QUE HACERLO
-		return
-
-	def liburuaBueltatu(self, liburuID, erabiltzaileID):
 		# HAY QUE HACERLO
 		return
 
