@@ -73,3 +73,44 @@ def logout():
 		request.user.delete_session(request.user.token)
 		request.user = None
 	return resp
+
+# FOROAK
+
+def foroaBerriaSortu(fIzena, eIzena, deskribapena):
+	# HAY QUE HACERLO
+	return
+
+# LAGUNAK
+
+def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
+	# HAY QUE HACERLO
+	return
+def lagunEskaeraBidali(igorleID, jasotzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ERRESERBAK
+
+def erreserbakIkusi(erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ERRESEINAK
+
+def erreseinakIkusi(erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ADMINISTRATZAILE FUNTZIOAK
+
+def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
+	# HAY QUE HACERLO
+	return
+
+def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
+	# HAY QUE HACERLO
+	return
+
+def erabiltzaileaEzabatu(eIzena):
+	# HAY QUE HACERLO
+	return
