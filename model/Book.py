@@ -4,12 +4,14 @@ from .Author import Author
 db = Connection()
 
 class Book:
-	def __init__(self, id, title, author, cover, description):
+	def __init__(self, id, portada, izenburua, urtea, idazlea, sinopsia, PDF):
 		self.id = id
-		self.title = title
-		self.author = author
-		self.cover = cover
-		self.description = description
+		self.portada = portada
+		self.izenburua = izenburua
+		self.urtea = urtea
+		self.idazlea = idazlea
+		self.sinopsia = sinopsia
+		self.PDF = PDF
 
 	@property
 	def author(self):
@@ -24,3 +26,7 @@ class Book:
 
 	def __str__(self):
 		return f"{self.title} ({self.author})"
+
+	def erreserbatu(erabiltzaileID):
+		# HAY QUE HACERLO
+		return

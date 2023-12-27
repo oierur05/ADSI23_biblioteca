@@ -73,3 +73,83 @@ def logout():
 		request.user.delete_session(request.user.token)
 		request.user = None
 	return resp
+
+# FOROAK
+
+def foroKatalogoanForoBilatu(hitzGako):
+	# HAY QUE HACERLO
+	return
+
+def foroaBerriaSortu(fIzena, eIzena, deskribapena):
+	# HAY QUE HACERLO
+	return
+
+def komentatuForoan(testua, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+def getForoa(foroID):
+	# HAY QUE HACERLO
+	return
+
+# LAGUNAK
+
+def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
+	# HAY QUE HACERLO
+	return
+def lagunEskaeraBidali(igorleID, jasotzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ERRESERBAK
+
+def erreserbakIkusi(erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+def liburuaErreserbatu(liburuID, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ERRESEINAK
+
+def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
+	# HAY QUE HACERLO
+	return
+def erreseinakIkusi(erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+# ADMINISTRATZAILE FUNTZIOAK
+
+def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
+	# HAY QUE HACERLO
+	return
+
+def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
+	# HAY QUE HACERLO
+	return
+
+def erabiltzaileaEzabatu(eIzena):
+	# HAY QUE HACERLO
+	return
+
+# ERABILTZAILEAK
+
+def erabiltzaileBilatu(eIzena):
+	# HAY QUE HACERLO
+	return
+
+# LIBURUAK
+
+def liburuKatalogoanBilatu(hitzGako):
+	# HAY QUE HACERLO
+	return
+
+def liburuaBueltatu(liburuID, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+def liburuaIkusi(liburuID):
+	# HAY QUE HACERLO
+	return
