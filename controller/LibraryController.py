@@ -59,10 +59,6 @@ class LibraryController:
 		# HAY QUE HACERLO
 		return
 
-	def foroaIkusi(self, foroID):
-		# HAY QUE HACERLO
-		return
-
 	# LAGUNAK
 
 	def setLagunEskaera(self, igorleID, jasotzaileID):
