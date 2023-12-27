@@ -79,7 +79,7 @@ class User:
 		# HAY QUE HACERLO
 		return
 
-	def erabiltzaileBErriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
+	def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
 		# HAY QUE HACERLO
 		return
 
