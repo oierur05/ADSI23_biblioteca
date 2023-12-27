@@ -40,3 +40,6 @@ class User:
 	def delete_session(self, session_hash):
 		db.delete("DELETE FROM Session WHERE session_hash = ? AND user_id = ?", (session_hash, self.username))
 
+	def eskaeraKudeatu(self, onartuDa, erabiltzaileID):
+		# TODO
+		pass
