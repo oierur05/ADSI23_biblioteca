@@ -76,7 +76,19 @@ def logout():
 
 # FOROAK
 
+def foroKatalogoanForoBilatu(hitzGako):
+	# HAY QUE HACERLO
+	return
+
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
+	# HAY QUE HACERLO
+	return
+
+def komentatuForoan(testua, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+def getForoa(foroID):
 	# HAY QUE HACERLO
 	return
 
@@ -95,8 +107,15 @@ def erreserbakIkusi(erabiltzaileID):
 	# HAY QUE HACERLO
 	return
 
+def liburuaErreserbatu(liburuID, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
 # ERRESEINAK
 
+def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
+	# HAY QUE HACERLO
+	return
 def erreseinakIkusi(erabiltzaileID):
 	# HAY QUE HACERLO
 	return
@@ -112,5 +131,25 @@ def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, he
 	return
 
 def erabiltzaileaEzabatu(eIzena):
+	# HAY QUE HACERLO
+	return
+
+# ERABILTZAILEAK
+
+def erabiltzaileBilatu(eIzena):
+	# HAY QUE HACERLO
+	return
+
+# LIBURUAK
+
+def liburuKatalogoanBilatu(hitzGako):
+	# HAY QUE HACERLO
+	return
+
+def liburuaBueltatu(liburuID, erabiltzaileID):
+	# HAY QUE HACERLO
+	return
+
+def liburuaIkusi(liburuID):
 	# HAY QUE HACERLO
 	return
