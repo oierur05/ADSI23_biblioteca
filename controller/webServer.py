@@ -50,9 +50,8 @@ def catalogue():
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
 		return redirect('/')
-	email = request.values.get("email", "")
-	password = request.values.get("password", "")
-	user = library.get_user(email, password)
+	erabiltzaileID = request.values.get("erabiltzaileID", "")
+	user = library.getErabiltzaile(erabiltzaileID)
 	if user:
 		session = user.new_session()
 		resp = redirect("/")
@@ -91,10 +90,6 @@ def getActualUser():
 
 def foroKatalogoanForoBilatu(hitzGako):
 	LibraryController().getForoak(hitzGako)
-	## ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
-	#emaitzak = db.select("SELECT * from FOROA WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (
-	#	'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
-	#return emaitzak.fetchall()
 
 
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
@@ -150,19 +145,11 @@ def erabiltzaileaEzabatu(eIzena):
 
 def erabiltzaileaBilatu(eIzena):
 	LibraryController().erabiltzaileBilatu(eIzena)
-	# ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
-	#emaitzak = db.select("SELECT * from User WHERE izena LIKE ?", (
-	#	eIzena + '%',))
-	#return emaitzak.fetchall()
 
 # LIBURUAK
 
 def liburuKatalogoanBilatu(hitzGako):
 	LibraryController().getLiburuak(hitzGako)
-	# ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
-	#emaitzak = db.select("SELECT * from BOOK WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?", (
-	#	'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
-	#return emaitzak.fetchall()
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(liburuID)

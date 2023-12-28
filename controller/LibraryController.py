@@ -35,12 +35,9 @@ class LibraryController:
 		]
 		return books, count
 
-	def get_user(self, email, password):
-		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
-		if len(user) > 0:
-			return User(user[0][0], user[0][1], user[0][2])
-		else:
-			return None
+	def getErabiltzaile(self, erabiltzaileID):
+		user = db.select("SELECT * from User WHERE erabiltzaileID = ?", erabiltzaileID)
+		return user.fetchone()
 
 	def get_user_cookies(self, token, time):
 		user = db.select("SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?", (time, token))
@@ -52,8 +49,9 @@ class LibraryController:
 	# FOROAK
 
 	def getForoak(self, hitzGako):
-		# HAY QUE HACERLO
-		return
+		emaitzak = db.select("SELECT * from FOROA WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (
+		'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
+		return emaitzak.fetchall()
 
 	def foroaSortu(self, fIzena, eIzena, deskribapena):
 		# HAY QUE HACERLO
@@ -68,8 +66,8 @@ class LibraryController:
 	# ERRESERBAK
 
 	def getErreserbak(self, erabiltzaileID):
-		# HAY QUE HACERLO
-		return
+		emaitzak = db.select("SELECT * from Erreserba WHERE erabiltzaileID = ?",erabiltzaileID)
+		return emaitzak.fetchall()
 
 	# ERRESEINAK
 
@@ -78,12 +76,16 @@ class LibraryController:
 		return
 
 	def getErreseinak(self, erabiltzaileID):
-		# HAY QUE HACERLO
-		return
+		emaitza = db.select("SELECT * FROM ERRESEINA WHERE erabiltzaileID = ?",erabiltzaileID)
+		return emaitza.fetchall()
 
 	def erreseinaEguneratu(self, erreseinaID, puntuazioa, testua):
-		# HAY QUE HACERLO
-		return
+		em = db.select("SELECT * from ERRESEINA WHERE erreseinaID = ?", erreseinaID)
+		erreseinaDago = em.fetchone()
+		if erreseinaDago:
+			db.update("UPDATE ERRESEINA SET puntuazioa = ?, testua = ? WHERE erreseinaID = ?",(puntuazioa,testua,erreseinaID))
+		else:
+			db.insert("INSERT INTO ERRESEINA (erreseinaID,puntuazioa,testua) VALUES (?,?,?)", (erreseinaID,puntuazioa,testua))
 
 	# ADMINISTRATZAILE FUNTZIOAK
 
@@ -102,15 +104,17 @@ class LibraryController:
 	# ERABILTZAILEAK
 
 	def erabiltzaileBilatu(self, eIzena):
-		# ESTE TIENE QUE HACER RETURN DE UNA VARIABLE DE TIPO USER
-		return
+		emaitzak = db.select("SELECT * from User WHERE izena LIKE ?", (
+		eIzena + '%',))
+		return emaitzak.fetchall()
 
 	# LIBURUAK
 
 	def getLiburuak(self, hitzGako):
-		# HAY QUE HACERLO
-		return
+		emaitzak = db.select("SELECT * from BOOK WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?", (
+		'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
+		return emaitzak.fetchall()
 
 	def getLiburua(self, liburuID):
-		# HAY QUE HACERLO
-		return
+		emaitza = db.select("SELECT * FROM BOOK WHERE liburuID = ?",liburuID)
+		return emaitza.fetchone()
