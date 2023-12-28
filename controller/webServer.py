@@ -1,3 +1,4 @@
+from model import User
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, make_response, redirect
 
@@ -74,6 +75,16 @@ def logout():
 		request.user = None
 	return resp
 
+def getActualUser():
+	if '/css' not in request.path and '/js' not in request.path:
+		token = request.cookies.get('token')
+		time = request.cookies.get('time')
+		if token and time:
+			user = library.get_user_cookies(token, float(time))
+			if user:
+				return user
+
+
 # FOROAK
 
 def foroKatalogoanForoBilatu(hitzGako):
@@ -95,17 +106,16 @@ def getForoa(foroID):
 # LAGUNAK
 
 def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
-	# HAY QUE HACERLO
-	return
+	user = LibraryController().erabiltzaileBilatu(aErabiltzaileaID)
+	user.eskaeraKudeatu(onartuDa, bErabiltzaileaID)
+
 def lagunEskaeraBidali(igorleID, jasotzaileID):
-	# HAY QUE HACERLO
-	return
+	LibraryController().setLagunEskaera(igorleID, jasotzaileID)
 
 # ERRESERBAK
 
 def erreserbakIkusi(erabiltzaileID):
-	# HAY QUE HACERLO
-	return
+	LibraryController().getErreserbak(erabiltzaileID)
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
 	# HAY QUE HACERLO
@@ -117,22 +127,19 @@ def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
 	# HAY QUE HACERLO
 	return
 def erreseinakIkusi(erabiltzaileID):
-	# HAY QUE HACERLO
-	return
+	LibraryController().getErreseinak(erabiltzaileID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
 def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
-	# HAY QUE HACERLO
-	return
+	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-	# HAY QUE HACERLO
-	return
+	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,
+												tel, pElek, helb, argazkia, administratzaileaDa)
 
 def erabiltzaileaEzabatu(eIzena):
-	# HAY QUE HACERLO
-	return
+	LibraryController().erabiltzaileaEzabatu(eIzena)
 
 # ERABILTZAILEAK
 

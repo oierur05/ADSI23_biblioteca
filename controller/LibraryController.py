@@ -102,7 +102,7 @@ class LibraryController:
 	# ERABILTZAILEAK
 
 	def erabiltzaileBilatu(self, eIzena):
-		# HAY QUE HACERLO
+		# ESTE TIENE QUE HACER RETURN DE UNA VARIABLE DE TIPO USER
 		return
 
 	# LIBURUAK
