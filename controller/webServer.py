@@ -1,8 +1,10 @@
 from model import User
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, make_response, redirect
+from model.Connection import Connection
 
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
+db = Connection()
 
 
 library = LibraryController()
@@ -88,8 +90,12 @@ def getActualUser():
 # FOROAK
 
 def foroKatalogoanForoBilatu(hitzGako):
-	# HAY QUE HACERLO
-	return
+	LibraryController().getForoak(hitzGako)
+	## ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
+	#emaitzak = db.select("SELECT * from FOROA WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (
+	#	'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
+	#return emaitzak.fetchall()
+
 
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
 	# HAY QUE HACERLO
@@ -118,14 +124,13 @@ def erreserbakIkusi(erabiltzaileID):
 	LibraryController().getErreserbak(erabiltzaileID)
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
-	# HAY QUE HACERLO
-	return
-
+	liburua = LibraryController().getLiburua(liburuID)
+	liburua.erreserbatu(erabiltzaileID)
 # ERRESEINAK
 
-def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
-	# HAY QUE HACERLO
-	return
+def erreseinaEgin(erreseinaID, puntuazioa, testua):
+	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
+
 def erreseinakIkusi(erabiltzaileID):
 	LibraryController().getErreseinak(erabiltzaileID)
 
@@ -143,20 +148,25 @@ def erabiltzaileaEzabatu(eIzena):
 
 # ERABILTZAILEAK
 
-def erabiltzaileBilatu(eIzena):
-	# HAY QUE HACERLO
-	return
+def erabiltzaileaBilatu(eIzena):
+	LibraryController().erabiltzaileBilatu(eIzena)
+	# ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
+	#emaitzak = db.select("SELECT * from User WHERE izena LIKE ?", (
+	#	eIzena + '%',))
+	#return emaitzak.fetchall()
 
 # LIBURUAK
 
 def liburuKatalogoanBilatu(hitzGako):
-	# HAY QUE HACERLO
-	return
+	LibraryController().getLiburuak(hitzGako)
+	# ESTO HABRIA QUE PONERLO EN EL LIBRARYCONTROLLER
+	#emaitzak = db.select("SELECT * from BOOK WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?", (
+	#	'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
+	#return emaitzak.fetchall()
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
-	# HAY QUE HACERLO
-	return
+	liburua = LibraryController().getLiburua(liburuID)
+	liburua.bueltatu(erabiltzaileID)
 
 def liburuaIkusi(liburuID):
-	# HAY QUE HACERLO
-	return
+	LibraryController().getLiburua(liburuID)
