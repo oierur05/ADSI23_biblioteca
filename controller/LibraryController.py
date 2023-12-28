@@ -1,4 +1,5 @@
 from model import Connection, Book, User
+from model.Foroa import Foroa
 from model.tools import hash_password
 
 db = Connection()
@@ -47,6 +48,15 @@ class LibraryController:
 			return None
 
 	# FOROAK
+	def getForoa(self, foroID):
+		foroLista = db.select("SELECT * from Foro WHERE id = ?", (foroID))
+
+		if len(foroLista) == 0:
+			return None
+
+		foroa = foroLista[0]
+
+		return Foroa(foroa[0], foroa[1], foroa[2], foroa[3], foroa[4])
 
 	def getForoak(self, hitzGako):
 		emaitzak = db.select("SELECT * from FOROA WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (

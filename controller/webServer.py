@@ -93,16 +93,19 @@ def foroKatalogoanForoBilatu(hitzGako):
 
 
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
-	# HAY QUE HACERLO
-	return
+	LibraryController().foroaSortu(fIzena, eIzena, deskribapena)
 
-def komentatuForoan(testua, erabiltzaileID):
-	# HAY QUE HACERLO
-	return
+def komentatuForoan(foroID, testua, erabiltzaileID):
+	foroa = LibraryController().getForoa(foroID)
+	if foroa is None:
+		return
+	foroa.gehituMezua(erabiltzaileID, testua)
 
-def getForoa(foroID):
-	# HAY QUE HACERLO
-	return
+def ikusiForoa(foroID):
+	foroa = LibraryController().getForoa(foroID)
+	if foroa is None:
+		return
+	foroa.getMezuak()
 
 # LAGUNAK
 
