@@ -92,8 +92,8 @@ def foroKatalogoanForoBilatu(hitzGako):
 	LibraryController().getForoak(hitzGako)
 
 
-def foroaBerriaSortu(fIzena, eIzena, deskribapena):
-	LibraryController().foroaSortu(fIzena, eIzena, deskribapena)
+def foroaBerriaSortu(fID, fIzena, eIzena, deskribapena):
+	LibraryController().foroaSortu(fID, fIzena, eIzena, deskribapena)
 
 def komentatuForoan(foroID, testua, erabiltzaileID):
 	foroa = LibraryController().getForoa(foroID)
@@ -134,8 +134,8 @@ def erreseinakIkusi(erabiltzaileID):
 
 # ADMINISTRATZAILE FUNTZIOAK
 
-def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
-	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
+def liburuBerriaGehitu(lID, portada, izenburua, urtea, idazlea, sinopsia, PDF):
+	LibraryController().liburuBerriaGehitu(lID, portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
 	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,

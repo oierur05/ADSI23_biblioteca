@@ -63,15 +63,18 @@ class LibraryController:
 		'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
 		return emaitzak.fetchall()
 
-	def foroaSortu(self, fIzena, eIzena, deskribapena):
-		# HAY QUE HACERLO
-		return
+	def foroaSortu(self, fID, fIzena, eIzena, deskribapena):
+		foro = db.select("SELECT * FROM FOROA WHERE foroID = ?", fID)
+		foroaDago = foro.fetchone()
+		if foroaDago:
+			raise Exception("ID hau duen foro bat existitzen da jada.")
+		else:
+			db.insert("INSERT INTO FOROA VALUES(?,?,?,?)", (fID,fIzena,eIzena,deskribapena))
 
 	# LAGUNAK
 
 	def setLagunEskaera(self, igorleID, jasotzaileID):
-		# HAY QUE HACERLO
-		return
+		db.insert("INSERT INTO LAGUNA(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
 
 	# ERRESERBAK
 
@@ -82,8 +85,8 @@ class LibraryController:
 	# ERRESEINAK
 
 	def getErreseina(self, erreseinaID):
-		# HAY QUE HACERLO
-		return
+		emaitza = db.select("SELECT * from ERRESEINA WHERE erreseinaID = ?", erreseinaID)
+		return emaitza.fetchone()
 
 	def getErreseinak(self, erabiltzaileID):
 		emaitza = db.select("SELECT * FROM ERRESEINA WHERE erabiltzaileID = ?",erabiltzaileID)
@@ -99,17 +102,29 @@ class LibraryController:
 
 	# ADMINISTRATZAILE FUNTZIOAK
 
-	def liburuBerriaGehitu(self, portada, izenburua, urtea, idazlea, sinopsia, PDF):
-		# HAY QUE HACERLO
-		return
+	def liburuBerriaGehitu(self, lID, portada, izenburua, urtea, idazlea, sinopsia, PDF):
+		lib = db.select("SELECT * FROM LIBURUA WHERE liburuID = ?", lID)
+		liburuaDago = lib.fetchone()
+		if liburuaDago:
+			raise Exception("ID hau duen liburu bat existitzen da jada.")
+		else:
+			db.insert("INSERT INTO LIBURUA VALUES(?,?,?,?,?,?,?)", (lID,portada,izenburua,urtea,idazlea,sinopsia,PDF))
 
 	def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-		# HAY QUE HACERLO
-		return
+		user = db.select("SELECT * FROM ERABILTZAILE WHERE erabiltzaileIzena = ?", eIzena)
+		erabiltzaileaDago = user.fetchone()
+		if erabiltzaileaDago:
+			raise Exception("Erabiltzaile izena ez da baliozkoa.")
+		else:
+			db.insert("INSERT INTO ERABILTZAILE VALUES (?,?,?,?,?,?,?,?,?)", (eIzena,izenAbizenak,pasahitza,nan,tel,pElek,helb,argazkia,administratzaileaDa))
 
 	def erabiltzaileaEzabatu(self, eIzena):
-		# HAY QUE HACERLO
-		return
+		user = db.select("SELECT * FROM ERABILTZAILE WHERE erabiltzaileIzena = ?", eIzena)
+		erabiltzaileaDago = user.fetchone()
+		if erabiltzaileaDago:
+			db.delete("DELETE FROM ERABILTZAILEA WHERE erabiltzaileIzena = ?", eIzena)
+		else:
+			raise Exception("Erabiltzailea ez da existitzen.")
 
 	# ERABILTZAILEAK
 
