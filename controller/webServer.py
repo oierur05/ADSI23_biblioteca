@@ -130,6 +130,8 @@ def ikusiForoa(foroID):
 
 def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
 	user = LibraryController().erabiltzaileBilatu(aErabiltzaileaID)
+	if user is None:
+		return
 	user.eskaeraKudeatu(onartuDa, bErabiltzaileaID)
 
 def lagunEskaeraBidali(igorleID, jasotzaileID):
@@ -142,7 +144,10 @@ def erreserbakIkusi(erabiltzaileID):
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(liburuID)
+	if liburua is None:
+		return
 	liburua.erreserbatu(erabiltzaileID)
+
 # ERRESEINAK
 
 def erreseinaEgin(erreseinaID, puntuazioa, testua):
@@ -175,6 +180,8 @@ def liburuKatalogoanBilatu(hitzGako):
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(liburuID)
+	if liburua is None:
+		return
 	liburua.bueltatu(erabiltzaileID)
 
 def liburuaIkusi(liburuID):
