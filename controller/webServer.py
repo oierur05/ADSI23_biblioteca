@@ -111,8 +111,8 @@ def foroKatalogoanForoBilatu(hitzGako):
 	LibraryController().getForoak(hitzGako)
 
 
-def foroaBerriaSortu(fID, fIzena, eIzena, deskribapena):
-	LibraryController().foroaSortu(fID, fIzena, eIzena, deskribapena)
+def foroaBerriaSortu(fIzena, eIzena, deskribapena):
+	LibraryController().foroaSortu(fIzena, eIzena, deskribapena)
 
 def komentatuForoan(foroID, testua, erabiltzaileID):
 	foroa = LibraryController().getForoa(foroID)
@@ -148,13 +148,13 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 def erreseinaEgin(erreseinaID, puntuazioa, testua):
 	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
 
-def erreseinakIkusi(erabiltzaileID):
-	LibraryController().getErreseinak(erabiltzaileID)
+def erreseinakIkusi(erabiltzaileID, liburuID):
+	LibraryController().getErreseinak(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
-def liburuBerriaGehitu(lID, portada, izenburua, urtea, idazlea, sinopsia, PDF):
-	LibraryController().liburuBerriaGehitu(lID, portada, izenburua, urtea, idazlea, sinopsia, PDF)
+def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
+	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
 	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,

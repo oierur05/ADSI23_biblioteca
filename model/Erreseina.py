@@ -1,6 +1,5 @@
 class Erreseina:
-   def __init__(self, erreseinaId, erabiltzaileIzena, puntuazioa, testua, likeKopurua):
-       self.erreseinaId = erreseinaId
+   def __init__(self, erabiltzaileIzena, puntuazioa, testua, likeKopurua):
        self.erabiltzaileIzena = erabiltzaileIzena
        self.puntuazioa = puntuazioa
        self.testua = testua

@@ -1,4 +1,7 @@
+import uuid
 from model import Connection, Book, User
+from model.Erreseina import Erreseina
+from model.Erreserba import Erreserba
 from model.Foroa import Foroa
 from model.tools import hash_password
 
@@ -14,31 +17,38 @@ class LibraryController:
 		return cls.__instance
 
 
-	def search_books(self, title="", author="", limit=6, page=0):
-		count = db.select("""
-				SELECT count() 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-		""", (f"%{title}%", f"%{author}%"))[0][0]
-		res = db.select("""
-				SELECT b.* 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-				LIMIT ? OFFSET ?
-		""", (f"%{title}%", f"%{author}%", limit, limit*page))
-		books = [
-			Book(b[0],b[1],b[2],b[3],b[4])
-			for b in res
-		]
-		return books, count
+
+#	def search_books(self, title="", author="", limit=6, page=0):
+#		count = db.select("""
+#				SELECT count()
+#				FROM Book b, Author a
+#				WHERE b.author=a.id
+#					AND b.title LIKE ?
+#					AND a.name LIKE ?
+#		""", (f"%{title}%", f"%{author}%"))[0][0]
+#		res = db.select("""
+#				SELECT b.*
+#				FROM Book b, Author a
+#				WHERE b.author=a.id
+#					AND b.title LIKE ?
+#					AND a.name LIKE ?
+#				LIMIT ? OFFSET ?
+#		""", (f"%{title}%", f"%{author}%", limit, limit*page))
+#		books = [
+#			Book(b[0],b[1],b[2],b[3],b[4])
+#			for b in res
+#		]
+#		return books, count
+
 
 	def getErabiltzaile(self, erabiltzaileID):
 		user = db.select("SELECT * from User WHERE erabiltzaileID = ?", erabiltzaileID)
-		return user.fetchone()
+		if len(user) == 0:
+			return None
+
+		user = user[0]
+
+		return User(user[0],user[7],user[8])
 
 	def get_user_cookies(self, token, time):
 		user = db.select("SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?", (time, token))
@@ -49,7 +59,7 @@ class LibraryController:
 
 	# FOROAK
 	def getForoa(self, foroID):
-		foroLista = db.select("SELECT * from Foro WHERE id = ?", (foroID))
+		foroLista = db.select("SELECT * from Foroa WHERE id = ?", (foroID))
 
 		if len(foroLista) == 0:
 			return None
@@ -59,87 +69,107 @@ class LibraryController:
 		return Foroa(foroa[0], foroa[1], foroa[2], foroa[3], foroa[4])
 
 	def getForoak(self, hitzGako):
-		emaitzak = db.select("SELECT * from FOROA WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (
+		foroLista = db.select("SELECT * from Foroa WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?", (
 		'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
-		return emaitzak.fetchall()
 
-	def foroaSortu(self, fID, fIzena, eIzena, deskribapena):
-		foro = db.select("SELECT * FROM FOROA WHERE foroID = ?", fID)
-		foroaDago = foro.fetchone()
-		if foroaDago:
-			raise Exception("ID hau duen foro bat existitzen da jada.")
-		else:
-			db.insert("INSERT INTO FOROA VALUES(?,?,?,?)", (fID,fIzena,eIzena,deskribapena))
+		return [Foroa(f[0], f[1], f[2], f[3], f[4]) for f in foroLista]
+
+	def foroaSortu(self, fIzena, eIzena, deskribapena):
+		db.insert("INSERT INTO Foroa VALUES(?,?,?,?)", (self.idBerria(db.select("SELECT foroID FROM FOROA"),fIzena,eIzena,deskribapena)))
 
 	# LAGUNAK
 
 	def setLagunEskaera(self, igorleID, jasotzaileID):
-		db.insert("INSERT INTO LAGUNA(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
+		db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
 
 	# ERRESERBAK
 
 	def getErreserbak(self, erabiltzaileID):
-		emaitzak = db.select("SELECT * from Erreserba WHERE erabiltzaileID = ?",erabiltzaileID)
-		return emaitzak.fetchall()
+		erreserbak = db.select("SELECT * from Erreserba WHERE erabiltzaileID = ?",erabiltzaileID)
+		return [ Erreserba(e[0], e[1], e[2], e[3]) for e in erreserbak ]
 
 	# ERRESEINAK
 
-	def getErreseina(self, erreseinaID):
-		emaitza = db.select("SELECT * from ERRESEINA WHERE erreseinaID = ?", erreseinaID)
-		return emaitza.fetchone()
+	def getErreseina(self, erabiltzaileID, liburuID):
+		erreseinak = db.select("SELECT * from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?", erabiltzaileID, liburuID)
+		if len(erreseinak) == 0:
+			return None
+		e = erreseinak[0]
+		return Erreseina(e[0], e[2], e[3], e[4])
 
-	def getErreseinak(self, erabiltzaileID):
-		emaitza = db.select("SELECT * FROM ERRESEINA WHERE erabiltzaileID = ?",erabiltzaileID)
-		return emaitza.fetchall()
+	def getErreseinak(self, erabiltzaileID, liburuID):
+		erreseinak = db.select("SELECT * FROM Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",erabiltzaileID, liburuID)
+		return [ Erreseina(e[0], e[2], e[3], e[4]) for e in erreseinak ]
 
-	def erreseinaEguneratu(self, erreseinaID, puntuazioa, testua):
-		em = db.select("SELECT * from ERRESEINA WHERE erreseinaID = ?", erreseinaID)
-		erreseinaDago = em.fetchone()
-		if erreseinaDago:
-			db.update("UPDATE ERRESEINA SET puntuazioa = ?, testua = ? WHERE erreseinaID = ?",(puntuazioa,testua,erreseinaID))
+	def erreseinaEguneratu(self, erabiltzaileID, liburuID, puntuazioa, testua):
+		em = db.select("SELECT erreseinaID from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?", erabiltzaileID, liburuID)
+
+		if len(em) == 0:
+			db.insert("INSERT INTO Erreseina (erreseinaID,puntuazioa,testua,likeKopurua) VALUES (?,?,?,?)", (erabiltzaileID, liburuID,puntuazioa,testua,0))
 		else:
-			db.insert("INSERT INTO ERRESEINA (erreseinaID,puntuazioa,testua) VALUES (?,?,?)", (erreseinaID,puntuazioa,testua))
+			db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileID = ? AND liburuID = ?",(puntuazioa,testua,erabiltzaileID, liburuID))
 
 	# ADMINISTRATZAILE FUNTZIOAK
 
-	def liburuBerriaGehitu(self, lID, portada, izenburua, urtea, idazlea, sinopsia, PDF):
-		lib = db.select("SELECT * FROM LIBURUA WHERE liburuID = ?", lID)
-		liburuaDago = lib.fetchone()
-		if liburuaDago:
-			raise Exception("ID hau duen liburu bat existitzen da jada.")
+	def liburuBerriaGehitu(self, portada, izenburua, urtea, idazlea, sinopsia, PDF):
+		lib = db.select("SELECT liburuID FROM Liburua WHERE izenburua = ? AND urtea = ? AND idazlea = ?", (izenburua, urtea, idazlea, sinopsia))
+
+		if len(lib) == 0:
+			lID = self.idBerria(db.select("SELECT liburuID FROM LIBURUA"))
+			db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)", (lID,portada,izenburua,urtea,idazlea,sinopsia,PDF))
 		else:
-			db.insert("INSERT INTO LIBURUA VALUES(?,?,?,?,?,?,?)", (lID,portada,izenburua,urtea,idazlea,sinopsia,PDF))
+			raise Exception("ID hau duen liburu bat existitzen da jada.")
 
 	def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-		user = db.select("SELECT * FROM ERABILTZAILE WHERE erabiltzaileIzena = ?", eIzena)
-		erabiltzaileaDago = user.fetchone()
-		if erabiltzaileaDago:
-			raise Exception("Erabiltzaile izena ez da baliozkoa.")
+		erabiltzaileak = db.select("SELECT * FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
+
+		if len(erabiltzaileak) == 0:
+			db.insert("INSERT INTO Erabiltzaile VALUES (?,?,?,?,?,?,?,?,?)", (eIzena,izenAbizenak,pasahitza,nan,tel,pElek,helb,argazkia,administratzaileaDa))
 		else:
-			db.insert("INSERT INTO ERABILTZAILE VALUES (?,?,?,?,?,?,?,?,?)", (eIzena,izenAbizenak,pasahitza,nan,tel,pElek,helb,argazkia,administratzaileaDa))
+			raise Exception("Erabiltzaile izena ez da baliozkoa.")
 
 	def erabiltzaileaEzabatu(self, eIzena):
-		user = db.select("SELECT * FROM ERABILTZAILE WHERE erabiltzaileIzena = ?", eIzena)
-		erabiltzaileaDago = user.fetchone()
-		if erabiltzaileaDago:
-			db.delete("DELETE FROM ERABILTZAILEA WHERE erabiltzaileIzena = ?", eIzena)
-		else:
+		erabiltzaileak = db.select("SELECT * FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
+
+		if len(erabiltzaileak) == 0:
 			raise Exception("Erabiltzailea ez da existitzen.")
+		else:
+			db.delete("DELETE FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
 
 	# ERABILTZAILEAK
 
 	def erabiltzaileBilatu(self, eIzena):
-		emaitzak = db.select("SELECT * from User WHERE izena LIKE ?", (
+		erabiltzaileak = db.select("SELECT * from User WHERE izena LIKE ?", (
 		eIzena + '%',))
-		return emaitzak.fetchall()
+		if len(erabiltzaileak) == 0:
+			return None
+
+		user = erabiltzaileak[0]
+
+		return User(user[0],user[7],user[8])
 
 	# LIBURUAK
 
 	def getLiburuak(self, hitzGako):
-		emaitzak = db.select("SELECT * from BOOK WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?", (
+		liburuak = db.select("SELECT * from Book WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?", (
 		'%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',))
-		return emaitzak.fetchall()
+
+		return [Book(b[0],b[1],b[2],b[3],b[4],b[5],b[6]) for b in liburuak]
 
 	def getLiburua(self, liburuID):
-		emaitza = db.select("SELECT * FROM BOOK WHERE liburuID = ?",liburuID)
-		return emaitza.fetchone()
+		liburuak = db.select("SELECT * FROM Book WHERE liburuID = ?",liburuID)
+		if len(liburuak) == 0:
+			return None
+
+		b = liburuak[0]
+
+		return Book(b[0],b[1],b[2],b[3],b[4],b[5],b[6])
+
+	# ID sortzailea
+	def idBerria(self, idLista):
+		idLista = map(int, idLista)
+
+		idBerria = uuid.uuid4().int // 2**16  # uuid.uuid4().hex[-4:]
+		while idBerria in idLista:
+			idBerria += 1  # = uuid.uuid4().int // 2**16
+		return idBerria
