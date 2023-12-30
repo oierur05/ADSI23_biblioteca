@@ -39,8 +39,8 @@ class LibraryController:
 #		]
 #		return books, count
 
-    def getErabiltzaile(self, erabiltzaileID):
-        user = db.select("SELECT * from User WHERE erabiltzaileID = ?", erabiltzaileID)
+    def getErabiltzaile(self, erabiltzaileizena):
+        user = db.select("SELECT * from erabiltzailea WHERE erabiltzaileizena = ?", erabiltzaileizena)
         if len(user) == 0:
             return None
 
@@ -50,7 +50,7 @@ class LibraryController:
 
     def get_user_cookies(self, token, time):
         user = db.select(
-            "SELECT u.* from User u, Session s WHERE u.id = s.user_id AND s.last_login = ? AND s.session_hash = ?",
+            "SELECT e.* from erabiltzailea e, saioa s WHERE e.z = s.user_id AND s.last_login = ? AND s.session_hash = ?",
             (time, token))
         if len(user) > 0:
             return User(user[0][0], user[0][1], user[0][2])
