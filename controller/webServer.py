@@ -45,6 +45,25 @@ def catalogue():
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
 
+@app.route('/foroak')
+def foroak():
+	title = request.values.get("title", "")
+	author = request.values.get("author", "")
+	page = int(request.values.get("page", 1))
+	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
+	total_pages = (nb_books // 6) + 1
+	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	                       total_pages=total_pages, max=max, min=min)
+
+@app.route('/perfila')
+def perfila():
+	title = request.values.get("title", "")
+	author = request.values.get("author", "")
+	page = int(request.values.get("page", 1))
+	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
+	total_pages = (nb_books // 6) + 1
+	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	                       total_pages=total_pages, max=max, min=min)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
