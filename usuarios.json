@@ -1,28 +1,48 @@
 {
   "usuarios": [
     {
-      "id": "a1",
-      "nombres": "James Gomez",
-      "email": "james@gmail.com",
-      "password": "123456"
+      "erabiltzaileizena": "a1",
+      "izenabizenak": "James Gomez",
+      "postaelektronikoa": "james@gmail.com",
+      "pasahitza": "123456",
+      "NAN": "12345678-A",
+      "telefonoa": 123456789,
+      "helbidea": "calle 1",
+      "argazkia": "foto 1",
+      "administratzaileada": true
     },
     {
-      "nombres": "Jhon Doe",
-      "email": "jhon@gmail.com",
-      "password": "123",
-      "id": "IPB7fSC"
+      "izenabizenak": "Jhon Doe",
+      "postaelektronikoa": "jhon@gmail.com",
+      "pasahitza": "123",
+      "erabiltzaileizena": "IPB7fSC",
+      "NAN": "12345678-B",
+      "telefonoa": 123456788,
+      "helbidea": "calle 2",
+      "argazkia": "foto 2",
+      "administratzaileada": true
     },
     {
-      "nombres": "Juan Ejemplo",
-      "email": "ejemplo@gmail.com",
-      "password": "123456",
-      "id": "NgbZCib"
+      "izenabizenak": "Juan Ejemplo",
+      "postaelektronikoa": "ejemplo@gmail.com",
+      "pasahitza": "123456",
+      "erabiltzaileizena": "NgbZCib",
+      "NAN": "12345678-C",
+      "telefonoa": 123456787,
+      "helbidea": "calle 3",
+      "argazkia": "foto 3",
+      "administratzaileada": false
     },
     {
-      "nombres": "Juan Ejemplo",
-      "email": "ejemplo@gmail.com",
-      "password": "123456",
-      "id": "S_Faisg"
+      "izenabizenak": "Juan Ejemplo",
+      "postaelektronikoa": "ejemplo@gmail.com",
+      "pasahitza": "123456",
+      "erabiltzaileizena": "S_Faisg",
+      "NAN": "12345678-D",
+      "telefonoa": 123456786,
+      "helbidea": "calle 4",
+      "argazkia": "foto 4",
+      "administratzaileada": false
     }
   ]
 }
