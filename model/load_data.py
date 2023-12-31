@@ -1,11 +1,16 @@
 import hashlib
 import sqlite3
 import json
+import os
+
+
+ruta_base_de_datos = os.path.join("..", "datos.db")
+
 
 salt = "library"
 
 
-con = sqlite3.connect("datos.db")
+con = sqlite3.connect(ruta_base_de_datos)
 cur = con.cursor()
 
 
@@ -121,28 +126,58 @@ cur.execute("""
 	)
 """)
 
+
+### Insert foroak
+
+ruta_foros = os.path.join("..", "foroak.tsv")
+with open(ruta_foros, 'r') as f:
+	foros = [x.split("\t") for x in f.readlines()]
+
+for id, erabiltzaileIzena, izena, desk, data in foros:
+
+	cur.execute("INSERT INTO Foroa VALUES (?, ?, ?, ?, ?)",
+		            (id, erabiltzaileIzena, izena, desk, data))
+
+	con.commit()
+
+### Insert kopiak
+
+ruta_copias = os.path.join("..", "kopiafisikoa.tsv")
+with open(ruta_copias, 'r') as f:
+	copias = [x.split("\t") for x in f.readlines()]
+
+for idKopia, idLib in copias:
+
+	cur.execute("INSERT INTO Kopiafisikoa VALUES (?, ?)",
+		            (idKopia,idLib))
+
+	con.commit()
+
+#### Insert books
+
+ruta_libros = os.path.join("..", "liburuak.tsv")
+with open(ruta_libros, 'r') as f:
+	libros = [x.split("\t") for x in f.readlines()]
+
+for id, urtea, pdf, author, title, cover, description in libros:
+
+	cur.execute("INSERT INTO Liburua VALUES (?, ?, ?, ?, ?, ?, ?)",
+		            (id,cover, title, urtea, author, description.strip(),pdf))
+
+	con.commit()
+
+
 ### Insert users
-with open('usuarios.json', 'r') as f:
+
+ruta_usuarios = os.path.join("..", "usuarios.json")
+with open(ruta_usuarios, 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
 for user in usuarios:
 	dataBase_password = user['pasahitza'] + salt
 	hashed = hashlib.md5(dataBase_password.encode())
 	dataBase_password = hashed.hexdigest()
-	cur.execute(f"""INSERT INTO Erabiltzailea VALUES ('{user['erabiltzaileizena']}', '{user['izenabizenak']}', '{user['postaelektronikoa']}', '{dataBase_password}')""")
+	cur.execute(f"""INSERT INTO Erabiltzailea VALUES ('{user['erabiltzaileizena']}', '{user['izenabizenak']}', '{dataBase_password}', '{user['NAN']}', '{user['telefonoa']}', '{user['postaelektronikoa']}', '{user['helbidea']}', '{user['argazkia']}', '{user['administratzaileada']}')""")
 	con.commit()
-
-
-#### Insert books
-with open('libros.tsv', 'r') as f:
-	libros = [x.split("\t") for x in f.readlines()]
-
-for author, title, cover, description in libros:
-
-	cur.execute("INSERT INTO Liburua VALUES (NULL, ?, ?, ?, ?, ?, ?)",
-		            (cover,title, None, author, description.strip(),None))
-
-	con.commit()
-
 
 
