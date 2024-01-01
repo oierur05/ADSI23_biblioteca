@@ -17,30 +17,31 @@ class LibraryController:
             cls.__instance.__initialized = False
         return cls.__instance
 
-#	def search_books(self, title="", author="", limit=6, page=0):
-#		count = db.select("""
-#				SELECT count()
-#				FROM Book b, Author a
-#				WHERE b.author=a.id
-#					AND b.title LIKE ?
-#					AND a.name LIKE ?
-#		""", (f"%{title}%", f"%{author}%"))[0][0]
-#		res = db.select("""
-#				SELECT b.*
-#				FROM Book b, Author a
-#				WHERE b.author=a.id
-#					AND b.title LIKE ?
-#					AND a.name LIKE ?
-#				LIMIT ? OFFSET ?
-#		""", (f"%{title}%", f"%{author}%", limit, limit*page))
-#		books = [
-#			Book(b[0],b[1],b[2],b[3],b[4])
-#			for b in res
-#		]
-#		return books, count
+# esto se utiliza en algun lau, y peta si se quita...
+	def search_books(self, title="", author="", limit=6, page=0):
+		count = db.select("""
+				SELECT count()
+				FROM Book b, Author a
+				WHERE b.author=a.id
+					AND b.title LIKE ?
+					AND a.name LIKE ?
+		""", (f"%{title}%", f"%{author}%"))[0][0]
+		res = db.select("""
+				SELECT b.*
+				FROM Book b, Author a
+				WHERE b.author=a.id
+					AND b.title LIKE ?
+					AND a.name LIKE ?
+				LIMIT ? OFFSET ?
+		""", (f"%{title}%", f"%{author}%", limit, limit*page))
+		books = [
+			Book(b[0],b[1],b[2],b[3],b[4])
+			for b in res
+		]
+		return books, count
 
     def getErabiltzaile(self, erabiltzaileizena):
-        user = db.select("SELECT * from erabiltzailea WHERE erabiltzaileizena = ?", erabiltzaileizena)
+        user = db.select("SELECT * from Erabiltzailea WHERE erabiltzaileizena = ?", erabiltzaileizena)
         if len(user) == 0:
             return None
 
@@ -50,7 +51,7 @@ class LibraryController:
 
     def get_user_cookies(self, token, time):
         user = db.select(
-            "SELECT e.* from erabiltzailea e, saioa s WHERE e.z = s.user_id AND s.last_login = ? AND s.session_hash = ?",
+            "SELECT e.* from Erabiltzailea e, Saioa s WHERE e.z = s.user_id AND s.last_login = ? AND s.session_hash = ?",
             (time, token))
         if len(user) > 0:
             return User(user[0][0], user[0][1], user[0][2])
@@ -78,12 +79,29 @@ class LibraryController:
 
     def foroaSortu(self, fIzena, eIzena, deskribapena):
         db.insert("INSERT INTO Foroa VALUES(?,?,?,?)",
-                  (self.idBerria(db.select("SELECT foroID FROM FOROA")), fIzena, eIzena, deskribapena))
+                  (self.idBerria(db.select("SELECT foroID FROM Foroa")), fIzena, eIzena, deskribapena))
 
     # LAGUNAK
 
     def setLagunEskaera(self, igorleID, jasotzaileID):
-        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
+        eskaerak = db.select("SELECT erabiltzaile1 FROM Laguna "
+                             "WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+                             (igorleID, jasotzaileID, jasotzaileID, igorleID))
+        if len(eskaerak) != 0:
+            return
+        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2) VALUES (?,?,false)", (igorleID, jasotzaileID))
+
+    def getLagunEskaerak(self, erabiltzaileID):
+        return [e[0] for e in db.select("SELECT erabiltzaile1 FROM Laguna WHERE onartua = false AND erabiltzaile2 = ?",
+                                        (erabiltzaileID))]
+
+    def getLagunak(self, erabiltzaileID):
+        lista = [e[0] for e in db.select("SELECT erabiltzaile1 FROM Laguna WHERE onartua = true AND erabiltzaile2 = ?",
+                                        (erabiltzaileID))]
+        lista.extend([e[0] for e in db.select("SELECT erabiltzaile2 FROM Laguna WHERE onartua = true AND erabiltzaile1 = ?",
+                           (erabiltzaileID))])
+        return lista
+
 
     # ERRESERBAK
 
@@ -124,7 +142,7 @@ class LibraryController:
                         (izenburua, urtea, idazlea, sinopsia))
 
         if len(lib) == 0:
-            lID = self.idBerria(db.select("SELECT liburuID FROM LIBURUA"))
+            lID = self.idBerria(db.select("SELECT liburuID FROM Liburua"))
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
                       (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF))
         else:

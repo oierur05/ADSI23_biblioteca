@@ -137,6 +137,12 @@ def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
 def lagunEskaeraBidali(igorleID, jasotzaileID):
 	LibraryController().setLagunEskaera(igorleID, jasotzaileID)
 
+def lagunEskaerakLortu(erabiltzaileID):
+	LibraryController().getLagunEskaerak(erabiltzaileID)
+
+def lagunakLortu(erabiltzaileID):
+	LibraryController().getLagunak(erabiltzaileID)
+
 # ERRESERBAK
 
 def erreserbakIkusi(erabiltzaileID):
