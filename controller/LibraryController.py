@@ -52,7 +52,7 @@ class LibraryController:
 
     def get_user_cookies(self, token, time):
         user = db.select(
-            "SELECT e.* from erabiltzailea e, Saioa s WHERE e.erabiltzaileizena = s.erabiltzaileizena AND s.data = ? AND s.hash = ?",
+            "SELECT e.* from Erabiltzailea e, Saioa s WHERE e.erabiltzaileizena = s.erabiltzaileizena AND s.data = ? AND s.hash = ?",
             (time, token))
         if len(user) > 0:
             return User(user[0][0], user[0][7], user[0][8])
@@ -130,7 +130,7 @@ class LibraryController:
         lib = db.select("SELECT count(liburuid) FROM Liburua WHERE izenburua = ? AND urtea = ? AND idazlea = ?",
                         (izenburua, urtea, idazlea,))[0][0]
         if lib == 0:
-            lID = self.idBerria(db.select("SELECT liburuID FROM LIBURUA")[0][0])
+            lID = self.idBerria([i[0] for i in db.select("SELECT liburuID FROM LIBURUA")])
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
                       (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF,))
         else:
@@ -191,9 +191,10 @@ class LibraryController:
 
     # ID sortzailea
     def idBerria(self, idLista):
-        idLista = map(int, idLista)
+        # idLista = map(int, idLista)
 
-        idBerria = uuid.uuid4().int // 2 ** 16  # uuid.uuid4().hex[-4:]
+        idBerria = uuid.uuid4().int % (2 ** 16)  # uuid.uuid4().hex[-4:]
         while idBerria in idLista:
             idBerria += 1  # = uuid.uuid4().int // 2**16
+        print(idBerria)
         return idBerria

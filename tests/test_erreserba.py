@@ -1,5 +1,8 @@
 from . import BaseTestClass
 
+from controller.LibraryController import LibraryController
+library = LibraryController()
+
 class TestErreserba(BaseTestClass):
 	
 	def test_erreserben_historiala_kontsultatu(self):
@@ -15,7 +18,7 @@ class TestErreserba(BaseTestClass):
 		# 			liburua erreserbatuta dago
 		#         zuzena:
 		# 			liburua ez dago erreserbatuta
-		self.assertTrue(False)w
+		self.assertTrue(False)
 
 	def test_liburua_bueltatu(self):
 		# TODO: falta la parte de liburuak en html asiq...
@@ -25,9 +28,3 @@ class TestErreserba(BaseTestClass):
 		#         zuzena:
 		# 			liburua existizen da eta erreserbatuta dago
 		self.assertTrue(False)
-
-
-		
-
-
-
