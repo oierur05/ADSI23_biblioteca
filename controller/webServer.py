@@ -37,43 +37,194 @@ def index():
 
 @app.route('/catalogue')
 def catalogue():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
-	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
-	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+	titulua = request.values.get("titulua", "")
+
+	if titulua:
+		Liburua, nb_books = library.getLiburuak(titulua)
+		return render_template('liburua.html', Liburua=Liburua)
+	else:
+		izenburua = request.values.get("izenburua", "")
+		page = int(request.values.get("page", 1))
+		Liburua, nb_books = library.getLiburuak(izenburua)
+		total_pages = (nb_books // 6) + 1
+		return render_template('catalogue.html', Liburua=Liburua, izenburua=izenburua, current_page=page,
+							   total_pages=total_pages, max=max, min=min)
+
+@app.route('/liburua')
+def liburua():
+	user = getActualUser()
+	if user:
+		titulua = request.values.get("titulua", "")
+		#return f"titulua? {titulua}"
+		if titulua:
+			Liburua, nb_books = library.getLiburuak(titulua)
+			#return f"liburua? {Liburua[0]}"
+			liburuaErreserbatu(f"{Liburua[0]}", user.username)
+			return redirect('/erreserbak')
+		else:
+			return redirect("/catalogue")
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			return redirect('/login')
+	return redirect("/catalogue")
+
+@app.route('/erreserbak')
+def erreserbak():
+	user = getActualUser()
+
+	if user:
+		Liburua = erreserbakIkusi(user.username)
+		resp = render_template('erreserbak.html', Liburua=Liburua)
+		id = request.values.get("id", "")
+		if id:
+			liburuaBueltatu(id, user.username)
+			return redirect('/erreserbak')
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/foroak')
 def foroak():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
+	izenburua = request.values.get("izenburua", "")
 	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
+	Foroa, nb_books = library.getForoak(izenburua)
 	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	return render_template('foroak.html', Foroa=Foroa, izenburua=izenburua, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
+
+@app.route('/libSortu')
+def libSortu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			izena = request.values.get("izena", "")
+			argazkia = request.values.get("argazkia", "")
+			idazlea = request.values.get("idazlea", "")
+			urtea = request.values.get("urtea", "")
+			sinopsia = request.values.get("sinopsia", "")
+			pdf = request.values.get("pdf", "")
+
+			if izena and argazkia and idazlea and urtea and sinopsia and pdf:
+				liburuBerriaGehitu(argazkia, izena, urtea, idazlea, sinopsia, pdf)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('libSortu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
+@app.route('/erabEzabatu')
+def erabEzabatu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			erabIzena = request.values.get("erabIzena", "")
+			if erabIzena:
+				erabiltzaileaEzabatu(erabIzena)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('erabEzabatu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
+@app.route('/erabSortu',  methods=['GET', 'POST'])
+def erabSortu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			izenabizen = request.values.get("izenabizen", "")
+			argazkia = request.values.get("argazkia", "")
+			nan = request.values.get("nan", "")
+			telefonoa = request.values.get("telefonoa", "")
+			helbidea = request.values.get("helbidea", "")
+			posta = request.values.get("posta", "")
+			erabIzena = request.values.get("erabIzena", "")
+			pasahitza = request.values.get("pasahitza", "")
+			admin = request.form.get("admin", "")
+
+			if izenabizen and argazkia and nan and telefonoa and helbidea and posta and erabIzena and pasahitza:
+				if admin:
+					adminDa = "True"
+				else:
+					adminDa = "False"
+				erabiltzaileBerriaSortu(erabIzena, izenabizen, pasahitza, nan, telefonoa, posta, helbidea, argazkia,
+										adminDa)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('erabSortu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/perfila')
 def perfila():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
-	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
-	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+
+	user = getActualUser()
+
+	if user:
+		erabSortu = request.values.get("erabSortu", "")
+		erabEzabatu = request.values.get("erabEzabatu", "")
+		libSortu = request.values.get("libSortu", "")
+		erreserbak = request.values.get("erreserbak", "")
+
+		if erabSortu:
+			return redirect('/erabSortu')
+		elif erabEzabatu:
+			return redirect('/erabEzabatu')
+		elif libSortu:
+			return redirect('/libSortu')
+		elif erreserbak:
+			return redirect('/erreserbak')
+
+		resp = render_template('perfila.html', user=user)
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
 		return redirect('/')
 	erabiltzaileID = request.values.get("erabiltzaileID", "")
-	user = library.getErabiltzaile(erabiltzaileID)
+	password = request.values.get("password", "")
+	user = library.getErabiltzaile(erabiltzaileID, password)
 	if user:
-		session = user.new_session()
-		resp = redirect("/")
+		session = user.sortuSaioa()
+		resp = redirect('/perfila')
 		resp.set_cookie('token', session.hash)
 		resp.set_cookie('time', str(session.time))
 	else:
@@ -140,7 +291,7 @@ def lagunEskaeraBidali(igorleID, jasotzaileID):
 # ERRESERBAK
 
 def erreserbakIkusi(erabiltzaileID):
-	LibraryController().getErreserbak(erabiltzaileID)
+	return LibraryController().getErreserbak(erabiltzaileID)
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(liburuID)
@@ -162,11 +313,11 @@ def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
 	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,
-												tel, pElek, helb, argazkia, administratzaileaDa)
+	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa)
 
 def erabiltzaileaEzabatu(eIzena):
 	LibraryController().erabiltzaileaEzabatu(eIzena)
+
 
 # ERABILTZAILEAK
 

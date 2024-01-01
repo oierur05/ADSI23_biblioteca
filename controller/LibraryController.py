@@ -4,6 +4,7 @@ from model import Connection, Book, User
 from model.Erreseina import Erreseina
 from model.Erreserba import Erreserba
 from model.Foroa import Foroa
+from model.tools import hash_password
 
 db = Connection()
 
@@ -39,21 +40,22 @@ class LibraryController:
 #		]
 #		return books, count
 
-    def getErabiltzaile(self, erabiltzaileizena):
-        user = db.select("SELECT * from erabiltzailea WHERE erabiltzaileizena = ?", erabiltzaileizena)
+    def getErabiltzaile(self, erabiltzaileizena, pasahitza):
+        user = db.select("SELECT * from Erabiltzailea WHERE erabiltzaileizena = ? AND pasahitza = ?",
+                         (erabiltzaileizena, pasahitza))
         if len(user) == 0:
             return None
 
-        user = user[0]
+        #user = user[0]
 
-        return User(user[0], user[7], user[8])
+        return User(user[0][0], user[0][7], user[0][8])
 
     def get_user_cookies(self, token, time):
         user = db.select(
-            "SELECT e.* from erabiltzailea e, saioa s WHERE e.z = s.user_id AND s.last_login = ? AND s.session_hash = ?",
+            "SELECT e.* from erabiltzailea e, Saioa s WHERE e.erabiltzaileizena = s.erabiltzaileizena AND s.data = ? AND s.hash = ?",
             (time, token))
         if len(user) > 0:
-            return User(user[0][0], user[0][1], user[0][2])
+            return User(user[0][0], user[0][7], user[0][8])
         else:
             return None
 
@@ -70,11 +72,16 @@ class LibraryController:
 
     def getForoak(self, hitzGako):
         foroLista = db.select(
-            "SELECT * from Foroa WHERE foroID LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?",
+            "SELECT * from Foroa WHERE id LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?",
             ('%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',
              '%' + hitzGako + '%',))
 
-        return [Foroa(f[0], f[1], f[2], f[3], f[4]) for f in foroLista]
+        count = db.select(
+            "SELECT count() from Foroa WHERE id LIKE ? OR erabiltzaileIzena LIKE ? OR izena LIKE ? OR deskribapena LIKE ? OR sorreraData LIKE ?",
+            ('%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',
+             '%' + hitzGako + '%',))[0][0]
+
+        return [Foroa(f[0], f[1], f[2], f[3], f[4]) for f in foroLista], count
 
     def foroaSortu(self, fIzena, eIzena, deskribapena):
         db.insert("INSERT INTO Foroa VALUES(?,?,?,?)",
@@ -88,7 +95,7 @@ class LibraryController:
     # ERRESERBAK
 
     def getErreserbak(self, erabiltzaileID):
-        erreserbak = db.select("SELECT * from Erreserba WHERE erabiltzaileID = ?", erabiltzaileID)
+        erreserbak = db.select("SELECT * from Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))
         return [Erreserba(e[0], e[1], e[2], e[3]) for e in erreserbak]
 
     # ERRESEINAK
@@ -120,33 +127,30 @@ class LibraryController:
     # ADMINISTRATZAILE FUNTZIOAK
 
     def liburuBerriaGehitu(self, portada, izenburua, urtea, idazlea, sinopsia, PDF):
-        lib = db.select("SELECT liburuID FROM Liburua WHERE izenburua = ? AND urtea = ? AND idazlea = ?",
-                        (izenburua, urtea, idazlea, sinopsia))
-
-        if len(lib) == 0:
-            lID = self.idBerria(db.select("SELECT liburuID FROM LIBURUA"))
+        lib = db.select("SELECT count(liburuid) FROM Liburua WHERE izenburua = ? AND urtea = ? AND idazlea = ?",
+                        (izenburua, urtea, idazlea,))[0][0]
+        if lib == 0:
+            lID = self.idBerria(db.select("SELECT liburuID FROM LIBURUA")[0][0])
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
-                      (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF))
+                      (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF,))
         else:
             raise Exception("ID hau duen liburu bat existitzen da jada.")
 
-    def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia,
-                                administratzaileaDa):
-        erabiltzaileak = db.select("SELECT * FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
-
-        if len(erabiltzaileak) == 0:
-            db.insert("INSERT INTO Erabiltzaile VALUES (?,?,?,?,?,?,?,?,?)",
-                      (eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa))
+    def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan,
+                                                         tel, pElek, helb, argazkia, administratzaileaDa):
+        erabiltzaileak = db.select("SELECT count(erabiltzaileizena) FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))[0][0]
+        if erabiltzaileak == 0:
+            db.insert("INSERT INTO Erabiltzailea VALUES (?,?,?,?,?,?,?,?,?)",
+                      (eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa,))
         else:
-            raise Exception("Erabiltzaile izena ez da baliozkoa.")
+            raise Exception("Erabiltzailea jadanik existitzen zen.")
 
     def erabiltzaileaEzabatu(self, eIzena):
-        erabiltzaileak = db.select("SELECT * FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
-
-        if len(erabiltzaileak) == 0:
+        erabiltzaileak = db.select("SELECT count(erabiltzaileizena) FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))[0][0]
+        if erabiltzaileak == 0:
             raise Exception("Erabiltzailea ez da existitzen.")
         else:
-            db.delete("DELETE FROM Erabiltzaile WHERE erabiltzaileIzena = ?", eIzena)
+            db.delete("DELETE FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))
 
     # ERABILTZAILEAK
 
@@ -163,14 +167,21 @@ class LibraryController:
 
     def getLiburuak(self, hitzGako):
         liburuak = db.select(
-            "SELECT * from Book WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?",
+            "SELECT * from Liburua WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?",
             ('%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',
              '%' + hitzGako + '%',))
 
-        return [Book(b[0], b[1], b[2], b[3], b[4], b[5], b[6]) for b in liburuak]
+        count = db.select(
+            "SELECT count() from Liburua WHERE liburuID LIKE ? OR izenburua LIKE ? OR urtea LIKE ? OR idazlea LIKE ? OR sinopsia LIKE ?",
+            ('%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%', '%' + hitzGako + '%',
+             '%' + hitzGako + '%',))[0][0]
+
+        libs = [Book(b[0], b[1], b[2], b[3], b[4], b[5], b[6]) for b in liburuak]
+
+        return libs, count
 
     def getLiburua(self, liburuID):
-        liburuak = db.select("SELECT * FROM Book WHERE liburuID = ?", liburuID)
+        liburuak = db.select("SELECT * FROM Liburua WHERE liburuid = ?", (liburuID,))
         if len(liburuak) == 0:
             return None
 

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+
+        {% for book in Liburua %}
+            <div>
+                <div>
+                    <center>
+                    {% if book.portada: %}
+                        <img src="{{book.portada}}" class="rounded" style="max-width: 20rem; height: fit-content;">
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title">{{book.izenburua}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{book.idazlea}}</h6>
+                        {% if book.sinopsia: %}
+                        <p class="card-text">{{book.sinopsia}}</p>
+                        {% endif %}
+                    </div>
+                        <form class="form-inline" action="/liburua">
+                            <input type="hidden" class="form-control mb-2" id="titulua" name="titulua" placeholder="liburu izena" value="{{book.izenburua}}">
+                            <button type="submit" class="btn btn-primary">
+                                Erreserbatu
+                            </button>
+                        </form>
+                    </center>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

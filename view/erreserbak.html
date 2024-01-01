@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+
+        {% for book in Liburua %}
+            <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                <div class="card d-flex flex-row" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{book.liburuID}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{book.hasieraData}}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">{{book.bukaeraData}}</h6>
+                        <form class="form-inline">
+                            <input type="hidden" class="form-control mb-2" id="id" name="id" placeholder="liburuID" value="{{book.liburuID}}">
+                            <button type="submit" class="btn btn-primary">
+                                Bueltatu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

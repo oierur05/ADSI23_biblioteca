@@ -26,10 +26,10 @@ class Book:
 		self._author = value
 
 	def __str__(self):
-		return f"{self.title} ({self.author})"
+		return f"{self.id}"
 
 	def erreserbatu(self, erabiltzaileID):
-		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
+		liburuIDLista = db.select("SELECT * from Kopiafisikoa WHERE liburuID = ?", (self.id,))
 		if len(liburuIDLista) == 0:
 			return
 
@@ -39,14 +39,14 @@ class Book:
 		now = float(now.time().strftime("%Y%m%d%H%M%S.%f"))
 		end = float(end.time().strftime("%Y%m%d%H%M%S.%f"))
 
-		db.insert("INSERT INTO Erreserba VALUES (?, ?, ?, ?)", (liburuID, erabiltzaileID, now, end))
+		db.insert("INSERT INTO Erreserba VALUES (?, ?, ?, ?)", (liburuID, erabiltzaileID, now, end,))
 
 	def bueltatu(self, erabiltzaileID):
-		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
+		liburuIDLista = db.select("SELECT * from Kopiafisikoa WHERE liburuID = ?", (self.id,))
 		if len(liburuIDLista) == 0:
 			return
 
 		liburuID = liburuIDLista[0][0]
 
 		db.delete("DELETE FROM Erreserba WHERE kopiaFisikoID = ? AND erabiltzaileIzena = ?",
-				  (liburuID,erabiltzaileID))
+				  (liburuID,erabiltzaileID,))

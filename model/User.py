@@ -24,26 +24,26 @@ class User:
 	def new_session(self):
 		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))
 		session_hash = hash_password(str(self.username)+str(now))
-		db.insert("INSERT INTO Session VALUES (?, ?, ?)", (session_hash, self.username, now))
+		db.insert("INSERT INTO Saioa VALUES (?, ?, ?)", (session_hash, self.username, now))
 		return Session(session_hash, now)
 
 	def validate_session(self, session_hash):
-		s = db.select("SELECT * from Session WHERE user_id = ? AND session_hash = ?", (self.username, session_hash))
+		s = db.select("SELECT * from Saioa WHERE erabiltzaileizena = ? AND hash = ?", (self.username, session_hash))
 		if len(s) > 0:
 			now = float(datetime.datetime.now().strftime("%Y%m%d%H%M%S.%f"))
 			session_hash_new = hash_password(str(self.username) + str(now))
-			db.update("UPDATE Session SET session_hash = ?, last_login=? WHERE session_hash = ? and user_id = ?", (session_hash_new, now, session_hash, self.username))
+			db.update("UPDATE Saioa SET hash = ?, data=? WHERE hash = ? and erabiltzaileizena = ?", (session_hash_new, now, session_hash, self.username))
 			return Session(session_hash_new, now)
 		else:
 			return None
 
 	def delete_session(self, session_hash):
-		db.delete("DELETE FROM Session WHERE session_hash = ? AND user_id = ?", (session_hash, self.username))
+		db.delete("DELETE FROM Saioa WHERE hash = ? AND erabiltzaileizena = ?", (session_hash, self.username))
 
 	def sortuSaioa(self):
 		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))
 		session_hash = hash_password(str(self.username)+str(now))
-		db.insert("INSERT INTO Session VALUES (?, ?, ?)", (session_hash, self.username, now))
+		db.insert("INSERT INTO Saioa VALUES (?, ?, ?)", (session_hash, self.username, now))
 		return Session(session_hash, now)
 
 	def eskaeraKudeatu(self, onartuDa, erabiltzaileID):
