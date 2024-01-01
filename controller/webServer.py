@@ -5,8 +5,6 @@ from model.Connection import Connection
 
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 db = Connection()
-
-
 library = LibraryController()
 
 
@@ -108,20 +106,20 @@ def getActualUser():
 # FOROAK
 
 def foroKatalogoanForoBilatu(hitzGako):
-	LibraryController().getForoak(hitzGako)
+	library.getForoak(hitzGako)
 
 
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
-	LibraryController().foroaSortu(fIzena, eIzena, deskribapena)
+	library.foroaSortu(fIzena, eIzena, deskribapena)
 
 def komentatuForoan(foroID, testua, erabiltzaileID):
-	foroa = LibraryController().getForoa(foroID)
+	foroa = library.getForoa(foroID)
 	if foroa is None:
 		return
 	foroa.gehituMezua(erabiltzaileID, testua)
 
 def ikusiForoa(foroID):
-	foroa = LibraryController().getForoa(foroID)
+	foroa = library.getForoa(foroID)
 	if foroa is None:
 		return
 	foroa.getMezuak()
@@ -129,27 +127,27 @@ def ikusiForoa(foroID):
 # LAGUNAK
 
 def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
-	user = LibraryController().erabiltzaileBilatu(aErabiltzaileaID)
+	user = library.erabiltzaileBilatu(aErabiltzaileaID)
 	if user is None:
 		return
 	user.eskaeraKudeatu(onartuDa, bErabiltzaileaID)
 
 def lagunEskaeraBidali(igorleID, jasotzaileID):
-	LibraryController().setLagunEskaera(igorleID, jasotzaileID)
+	library.setLagunEskaera(igorleID, jasotzaileID)
 
 def lagunEskaerakLortu(erabiltzaileID):
-	LibraryController().getLagunEskaerak(erabiltzaileID)
+	library.getLagunEskaerak(erabiltzaileID)
 
 def lagunakLortu(erabiltzaileID):
-	LibraryController().getLagunak(erabiltzaileID)
+	library.getLagunak(erabiltzaileID)
 
 # ERRESERBAK
 
 def erreserbakIkusi(erabiltzaileID):
-	LibraryController().getErreserbak(erabiltzaileID)
+	library.getErreserbak(erabiltzaileID)
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
-	liburua = LibraryController().getLiburua(liburuID)
+	liburua = library.getLiburua(liburuID)
 	if liburua is None:
 		return
 	liburua.erreserbatu(erabiltzaileID)
@@ -157,38 +155,38 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 # ERRESEINAK
 
 def erreseinaEgin(erreseinaID, puntuazioa, testua):
-	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
+	library.erreseinaEguneratu(erreseinaID,puntuazioa,testua)
 
 def erreseinakIkusi(erabiltzaileID, liburuID):
-	LibraryController().getErreseinak(erabiltzaileID, liburuID)
+	library.getErreseinak(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
 def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
-	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
+	library.liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,
+	library.erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,
 												tel, pElek, helb, argazkia, administratzaileaDa)
 
 def erabiltzaileaEzabatu(eIzena):
-	LibraryController().erabiltzaileaEzabatu(eIzena)
+	library.erabiltzaileaEzabatu(eIzena)
 
 # ERABILTZAILEAK
 
 def erabiltzaileaBilatu(eIzena):
-	LibraryController().erabiltzaileBilatu(eIzena)
+	library.erabiltzaileBilatu(eIzena)
 
 # LIBURUAK
 
 def liburuKatalogoanBilatu(hitzGako):
-	LibraryController().getLiburuak(hitzGako)
+	library.getLiburuak(hitzGako)
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
-	liburua = LibraryController().getLiburua(liburuID)
+	liburua = library.getLiburua(liburuID)
 	if liburua is None:
 		return
 	liburua.bueltatu(erabiltzaileID)
 
 def liburuaIkusi(liburuID):
-	LibraryController().getLiburua(liburuID)
+	library.getLiburua(liburuID)

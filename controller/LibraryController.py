@@ -18,27 +18,28 @@ class LibraryController:
         return cls.__instance
 
 # esto se utiliza en algun lau, y peta si se quita...
-	def search_books(self, title="", author="", limit=6, page=0):
-		count = db.select("""
-				SELECT count()
-				FROM Book b, Author a
-				WHERE b.author=a.id
-					AND b.title LIKE ?
-					AND a.name LIKE ?
-		""", (f"%{title}%", f"%{author}%"))[0][0]
-		res = db.select("""
-				SELECT b.*
-				FROM Book b, Author a
-				WHERE b.author=a.id
-					AND b.title LIKE ?
-					AND a.name LIKE ?
-				LIMIT ? OFFSET ?
-		""", (f"%{title}%", f"%{author}%", limit, limit*page))
-		books = [
-			Book(b[0],b[1],b[2],b[3],b[4])
-			for b in res
-		]
-		return books, count
+    def search_books(self, title="", author="", limit=6, page=0):
+        pass
+        #		count = db.select("""
+#				SELECT count()
+#				FROM Book b, Author a
+	#			WHERE b.author=a.id
+#					AND b.title LIKE ?
+#					AND a.name LIKE ?
+#		""", (f"%{title}%", f"%{author}%"))[0][0]
+        #		res = db.select("""
+#				SELECT b.*
+#				FROM Book b, Author a
+#				WHERE b.author=a.id
+#					AND b.title LIKE ?
+#					AND a.name LIKE ?
+#				LIMIT ? OFFSET ?
+#		""", (f"%{title}%", f"%{author}%", limit, limit*page))
+#		books = [
+#			Book(b[0],b[1],b[2],b[3],b[4])
+#			for b in res
+#		]
+    #		return books, count
 
     def getErabiltzaile(self, erabiltzaileizena):
         user = db.select("SELECT * from Erabiltzailea WHERE erabiltzaileizena = ?", erabiltzaileizena)
@@ -84,6 +85,8 @@ class LibraryController:
     # LAGUNAK
 
     def setLagunEskaera(self, igorleID, jasotzaileID):
+        if igorleID == jasotzaileID:
+            return
         eskaerak = db.select("SELECT erabiltzaile1 FROM Laguna "
                              "WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
                              (igorleID, jasotzaileID, jasotzaileID, igorleID))
