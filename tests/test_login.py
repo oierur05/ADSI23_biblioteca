@@ -36,9 +36,9 @@ class TestLogin(BaseTestClass):
 		self.assertNotIn('time', ''.join(res.headers.values()))
 
 	def test_log_out(self):
-		res = self.login('jhon@gmail.com', '123')
+		res = self.login('numen_0', 'calvo')
 		self.assertEqual(302, res.status_code)
-		self.assertEqual('/', res.location)
+		self.assertEqual('/perfila', res.location)
 		res2 = self.client.get('/')
 		self.assertIn('token', ''.join(res2.headers.values()))
 		self.assertIn('time', ''.join(res2.headers.values()))
