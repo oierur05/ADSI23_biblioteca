@@ -129,9 +129,6 @@ cur.execute("""
 	)
 """)
 
-cur.execute("delete from Liburua")
-con.commit()
-
 #### Insert books
 
 ruta_libros = os.path.join("..", "liburuak.tsv")
