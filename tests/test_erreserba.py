@@ -8,7 +8,6 @@ library = LibraryController()
 class TestErreserba(BaseTestClass):
 
 	def test_erreserben_historiala_kontsultatu(self):
-		# TODO: falta la parte de liburuak en html asiq...
 		# testak:
 		# 			1. historiala hutsik dauka
 		#			2. historiala dauka
@@ -17,8 +16,7 @@ class TestErreserba(BaseTestClass):
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
-		print(page.find('div', class_='row').prettify())
-		self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
+		self.assertEqual(2, len(page.find('div', class_='row').find_all('div', class_='card')))
 		self.irten()
 		# [2]
 		self.sartu('juanbelio', 'juan')
@@ -26,18 +24,29 @@ class TestErreserba(BaseTestClass):
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
-		self.logout()
+		self.irten()
 
 	def test_liburua_erreserbatu(self):
-		# TODO: falta la parte de liburuak en html asiq...
 		# testak: okerra:
-		# 			liburua erreserbatuta dago
+		# 			1. liburua erreserbatuta dago
 		#         zuzena:
-		# 			liburua ez dago erreserbatuta
+		# 			2. liburua ez dago erreserbatuta
+		self.sartu('numen_0', 'calvo')
+		# [2]
+		params = {
+			'titulua': "Ligeros libertinajes sabaticos"
+		}
+		res = self.client.get('/catalogue', query_string = params)
+		self.assertEqual(200, res.status_code)
+		res = self.client.get('/liburua', query_string = params)
+		print(res.headers)
+		page = BeautifulSoup(res.data, features="html.parser")
+		#self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
+		# [1]
+		self.irten()
 		self.assertTrue(False)
 
 	def test_liburua_bueltatu(self):
-		# TODO: falta la parte de liburuak en html asiq...
 		# testak: okerra:
 		# 			liburua ez dago erreserbatuta
 		# 			liburua ez da existitzen

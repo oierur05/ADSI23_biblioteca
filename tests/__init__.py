@@ -18,10 +18,15 @@ class BaseTestClass(unittest.TestCase):
 		))
 
 	def logout(self):
-		return self.client.post('/logout', follow_redirects=True)
+		return self.client.get('/logout')
 
 	def sartu(self, erabiltzaileID, password):
 		res = self.login(erabiltzaileID, password)
 
 	def irten(self):
 		res = self.logout()
+		self.assertEqual(302, res.status_code)
+		self.assertEqual('/', res.location)
+		res = self.client.get('/')
+		self.assertNotIn('token', ''.join(res.headers.values()))
+		self.assertNotIn('time', ''.join(res.headers.values()))
