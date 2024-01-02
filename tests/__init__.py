@@ -18,4 +18,10 @@ class BaseTestClass(unittest.TestCase):
 		))
 
 	def logout(self):
-		return self.client.post('/logout?path={{request.path}}')
+		return self.client.post('/logout', follow_redirects=True)
+
+	def sartu(self, erabiltzaileID, password):
+		res = self.login(erabiltzaileID, password)
+
+	def irten(self):
+		res = self.logout()
