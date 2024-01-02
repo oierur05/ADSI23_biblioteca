@@ -133,6 +133,9 @@ class LibraryController:
             lID = self.idBerria([i[0] for i in db.select("SELECT liburuID FROM LIBURUA")])
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
                       (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF,))
+            kID = self.idBerria([i[0] for i in db.select("SELECT kopiaid FROM Kopiafisikoa")])
+            db.insert("INSERT INTO Kopiafisikoa VALUES(?,?)",
+                      (kID, lID,))
         else:
             raise Exception("ID hau duen liburu bat existitzen da jada.")
 
@@ -188,6 +191,19 @@ class LibraryController:
         b = liburuak[0]
 
         return Book(b[0], b[1], b[2], b[3], b[4], b[5], b[6])
+
+    def getLiburuKopia(self, liburuID):
+        liburua = db.select("SELECT liburuid FROM Kopiafisikoa WHERE kopiaid = ?", (liburuID,))
+        if len(liburua) == 0:
+            return None
+
+        return self.getLiburua(liburua[0][0])
+
+    def getLiburuKopiaID(self, liburuID):
+        libID = self.getLiburuKopia(liburuID)
+        if libID is None:
+            return None
+        return libID.id
 
     # ID sortzailea
     def idBerria(self, idLista):

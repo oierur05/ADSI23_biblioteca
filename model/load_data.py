@@ -29,6 +29,9 @@ cur.execute("""
 	)
 """)
 
+#cur.execute("""DELETE FROM Erreserba WHERE kopiafisikoid = -1""")
+#con.commit()
+
 cur.execute("""
 	CREATE TABLE IF NOT EXISTS Laguna(
    		erabiltzaile1 VARCHAR(15),

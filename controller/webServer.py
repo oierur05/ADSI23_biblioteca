@@ -59,7 +59,7 @@ def liburua():
 		if titulua:
 			Liburua, nb_books = library.getLiburuak(titulua)
 			#return f"liburua? {Liburua[0]}"
-			liburuaErreserbatu(f"{Liburua[0]}", user.username)
+			liburuaErreserbatu(Liburua[0].id, user.username)
 			return redirect('/erreserbak')
 		else:
 			return redirect("/catalogue")
@@ -75,8 +75,17 @@ def erreserbak():
 	user = getActualUser()
 
 	if user:
-		Liburua = erreserbakIkusi(user.username)
-		resp = render_template('erreserbak.html', Liburua=Liburua)
+		Erreserbak = erreserbakIkusi(user.username)
+		Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+		class Mezcla:
+			def __init__(self, lib, erre):
+				self.lib = lib
+				self.erre = erre
+
+		Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+		resp = render_template('erreserbak.html', Info=Info)
 		id = request.values.get("id", "")
 		if id:
 			liburuaBueltatu(id, user.username)
@@ -330,10 +339,13 @@ def liburuKatalogoanBilatu(hitzGako):
 	LibraryController().getLiburuak(hitzGako)
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
-	liburua = LibraryController().getLiburua(liburuID)
+	liburua = LibraryController().getLiburua(LibraryController().getLiburuKopiaID(liburuID))
 	if liburua is None:
 		return
-	liburua.bueltatu(erabiltzaileID)
+	liburua.bueltatu(erabiltzaileID, liburuID)
 
 def liburuaIkusi(liburuID):
 	LibraryController().getLiburua(liburuID)
+
+def liburuKopiaIkusi(liburuID):
+	return LibraryController().getLiburuKopia(liburuID)
