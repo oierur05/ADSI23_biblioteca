@@ -108,21 +108,25 @@ class LibraryController:
         e = erreseinak[0]
         return Erreseina(e[0], e[2], e[3], e[4])
 
-    def getErreseinak(self, erabiltzaileID, liburuID):
-        erreseinak = db.select("SELECT * FROM Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",
-                               (erabiltzaileID, liburuID))
+    def getErreseinak(self, liburuID):
+        erreseinak = db.select("SELECT * FROM Erreseina WHERE liburuID = ?",
+                               (liburuID,))
         return [Erreseina(e[0], e[2], e[3], e[4]) for e in erreseinak]
 
     def erreseinaEguneratu(self, erabiltzaileID, liburuID, puntuazioa, testua):
-        em = db.select("SELECT erreseinaID from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",
-                       (erabiltzaileID, liburuID))
+        em = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
+                       (erabiltzaileID, liburuID,))
 
         if len(em) == 0:
-            db.insert("INSERT INTO Erreseina (erreseinaID,puntuazioa,testua,likeKopurua) VALUES (?,?,?,?)",
-                      (erabiltzaileID, liburuID, puntuazioa, testua, 0))
+            db.insert("INSERT INTO Erreseina (erabiltzaileizena,liburuid,puntuazioa,testua,likeKopurua) VALUES (?,?,?,?,?)",
+                      (erabiltzaileID, liburuID, puntuazioa, testua, 0,))
         else:
-            db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileID = ? AND liburuID = ?",
-                      (puntuazioa, testua, erabiltzaileID, liburuID))
+            db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileizena = ? AND liburuID = ?",
+                      (puntuazioa, testua, erabiltzaileID, liburuID,))
+
+    def erreseinaLikeGehitu(self, erabiltzaileID, liburuID):
+        em = db.select("UPDATE Erreseina SET likeKopurua = likeKopurua + 1 WHERE erabiltzaileizena = ? AND liburuID = ?",
+                       (erabiltzaileID, liburuID,))
 
     # ADMINISTRATZAILE FUNTZIOAK
 
@@ -133,6 +137,9 @@ class LibraryController:
             lID = self.idBerria([i[0] for i in db.select("SELECT liburuID FROM LIBURUA")])
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
                       (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF,))
+            kID = self.idBerria([i[0] for i in db.select("SELECT kopiaid FROM Kopiafisikoa")])
+            db.insert("INSERT INTO Kopiafisikoa VALUES(?,?)",
+                      (kID, lID,))
         else:
             raise Exception("ID hau duen liburu bat existitzen da jada.")
 
@@ -188,6 +195,19 @@ class LibraryController:
         b = liburuak[0]
 
         return Book(b[0], b[1], b[2], b[3], b[4], b[5], b[6])
+
+    def getLiburuKopia(self, liburuID):
+        liburua = db.select("SELECT liburuid FROM Kopiafisikoa WHERE kopiaid = ?", (liburuID,))
+        if len(liburua) == 0:
+            return None
+
+        return self.getLiburua(liburua[0][0])
+
+    def getLiburuKopiaID(self, liburuID):
+        libID = self.getLiburuKopia(liburuID)
+        if libID is None:
+            return None
+        return libID.id
 
     # ID sortzailea
     def idBerria(self, idLista):

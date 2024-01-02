@@ -41,7 +41,8 @@ def catalogue():
 
 	if titulua:
 		Liburua, nb_books = library.getLiburuak(titulua)
-		return render_template('liburua.html', Liburua=Liburua)
+		erreseinak = erreseinakIkusi(Liburua[0].id)
+		return render_template('liburua.html', Liburua=Liburua[0], Erreseinak=erreseinak, bueltatu="False")
 	else:
 		izenburua = request.values.get("izenburua", "")
 		page = int(request.values.get("page", 1))
@@ -59,15 +60,36 @@ def liburua():
 		if titulua:
 			Liburua, nb_books = library.getLiburuak(titulua)
 			#return f"liburua? {Liburua[0]}"
-			liburuaErreserbatu(f"{Liburua[0]}", user.username)
+			liburuaErreserbatu(Liburua[0].id, user.username)
 			return redirect('/erreserbak')
-		else:
-			return redirect("/catalogue")
+
+		like = request.values.get("like", "")
+
+		if like:
+			erreseinaLikeGehitu(user.username, like)
+			Liburua = liburuaIkusi(like)
+			erreseinak = erreseinakIkusi(like)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
+
+		erreseinaegin = request.values.get("erreseinaegin", "")
+
+		if erreseinaegin:
+			testua = request.values.get("testua", "")
+			balorazioa = request.values.get("balorazioa", "")
+			liburuid = request.values.get("liburuid", "")
+			erreseinaEgin(user.username, liburuid, balorazioa, testua)
+			Liburua = liburuaIkusi(liburuid)
+			erreseinak = erreseinakIkusi(liburuid)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
+
+		return redirect("/catalogue")
+
 	else:
 		if request.method == 'POST':
 			return redirect('/login')
 		else:
 			return redirect('/login')
+
 	return redirect("/catalogue")
 
 @app.route('/erreserbak')
@@ -75,12 +97,23 @@ def erreserbak():
 	user = getActualUser()
 
 	if user:
-		Liburua = erreserbakIkusi(user.username)
-		resp = render_template('erreserbak.html', Liburua=Liburua)
+		Erreserbak = erreserbakIkusi(user.username)
+		Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+		class Mezcla:
+			def __init__(self, lib, erre):
+				self.lib = lib
+				self.erre = erre
+
+		Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+		resp = render_template('erreserbak.html', Info=Info)
 		id = request.values.get("id", "")
 		if id:
 			liburuaBueltatu(id, user.username)
-			return redirect('/erreserbak')
+			lib = liburuKopiaIkusi(id)
+			erreseinak = erreseinakIkusi(lib.id)
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
 
 	else:
 		if request.method == 'POST':
@@ -301,11 +334,14 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 
 # ERRESEINAK
 
-def erreseinaEgin(erreseinaID, puntuazioa, testua):
-	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
+def erreseinaEgin(erreseinaID, liburuID, puntuazioa, testua):
+	LibraryController().erreseinaEguneratu(erreseinaID, liburuID, puntuazioa, testua)
 
-def erreseinakIkusi(erabiltzaileID, liburuID):
-	LibraryController().getErreseinak(erabiltzaileID, liburuID)
+def erreseinakIkusi(liburuID):
+	return LibraryController().getErreseinak(liburuID)
+
+def erreseinaLikeGehitu(erabiltzaileID, liburuID):
+	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
@@ -330,10 +366,13 @@ def liburuKatalogoanBilatu(hitzGako):
 	LibraryController().getLiburuak(hitzGako)
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
-	liburua = LibraryController().getLiburua(liburuID)
+	liburua = LibraryController().getLiburua(LibraryController().getLiburuKopiaID(liburuID))
 	if liburua is None:
 		return
-	liburua.bueltatu(erabiltzaileID)
+	liburua.bueltatu(erabiltzaileID, liburuID)
 
 def liburuaIkusi(liburuID):
-	LibraryController().getLiburua(liburuID)
+	return LibraryController().getLiburua(liburuID)
+
+def liburuKopiaIkusi(liburuID):
+	return LibraryController().getLiburuKopia(liburuID)

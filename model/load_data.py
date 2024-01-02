@@ -29,6 +29,9 @@ cur.execute("""
 	)
 """)
 
+#cur.execute("""DELETE FROM Erreseina WHERE erabiltzaileizena = 'juanbelio'""")
+#con.commit()
+
 cur.execute("""
 	CREATE TABLE IF NOT EXISTS Laguna(
    		erabiltzaile1 VARCHAR(15),
