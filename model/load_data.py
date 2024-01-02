@@ -127,6 +127,19 @@ cur.execute("""
 """)
 
 
+#### Insert books
+
+ruta_libros = os.path.join("..", "liburuak.tsv")
+with open(ruta_libros, 'r') as f:
+	libros = [x.split("\t") for x in f.readlines()]
+
+for id, urtea, pdf, author, title, cover, description in libros:
+
+	cur.execute("INSERT INTO Liburua VALUES (?, ?, ?, ?, ?, ?, ?)",
+		            (id,cover, title, urtea, author, description.strip(),pdf))
+
+	con.commit()
+
 ### Insert foroak
 
 ruta_foros = os.path.join("..", "foroak.tsv")
@@ -153,18 +166,7 @@ for idKopia, idLib in copias:
 
 	con.commit()
 
-#### Insert books
 
-ruta_libros = os.path.join("..", "liburuak.tsv")
-with open(ruta_libros, 'r') as f:
-	libros = [x.split("\t") for x in f.readlines()]
-
-for id, urtea, pdf, author, title, cover, description in libros:
-
-	cur.execute("INSERT INTO Liburua VALUES (?, ?, ?, ?, ?, ?, ?)",
-		            (id,cover, title, urtea, author, description.strip(),pdf))
-
-	con.commit()
 
 
 ### Insert users
