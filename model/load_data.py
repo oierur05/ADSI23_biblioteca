@@ -129,6 +129,8 @@ cur.execute("""
 	)
 """)
 
+cur.execute("delete from Liburua")
+con.commit()
 
 #### Insert books
 
