@@ -65,8 +65,9 @@ def liburua():
 
 		like = request.values.get("like", "")
 
-		#if like:
-		#	likeEman(like)
+		if like:
+			erreseinaLikeGehitu(user.username, like)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
 
 		erreseinaegin = request.values.get("erreseinaegin", "")
 
@@ -74,8 +75,8 @@ def liburua():
 			testua = request.values.get("testua", "")
 			balorazioa = request.values.get("balorazioa", "")
 			liburuid = request.values.get("liburuid", "")
-
 			erreseinaEgin(user.username, liburuid, balorazioa, testua)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
 
 		return redirect("/catalogue")
 
@@ -84,6 +85,7 @@ def liburua():
 			return redirect('/login')
 		else:
 			return redirect('/login')
+
 	return redirect("/catalogue")
 
 @app.route('/erreserbak')
@@ -336,6 +338,9 @@ def erreseinaEgin(erreseinaID, liburuID, puntuazioa, testua):
 
 def erreseinakIkusi(liburuID):
 	return LibraryController().getErreseinak(liburuID)
+
+def erreseinaLikeGehitu(erabiltzaileID, liburuID):
+	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 

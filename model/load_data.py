@@ -29,7 +29,7 @@ cur.execute("""
 	)
 """)
 
-#cur.execute("""DELETE FROM Erreserba WHERE kopiafisikoid = -1""")
+#cur.execute("""DELETE FROM Erreseina WHERE erabiltzaileizena = 'juanbelio'""")
 #con.commit()
 
 cur.execute("""

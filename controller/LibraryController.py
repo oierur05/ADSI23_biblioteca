@@ -114,19 +114,19 @@ class LibraryController:
         return [Erreseina(e[0], e[2], e[3], e[4]) for e in erreseinak]
 
     def erreseinaEguneratu(self, erabiltzaileID, liburuID, puntuazioa, testua):
-        em = db.select("SELECT erreseinaID from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",
-                       (erabiltzaileID, liburuID))
+        em = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
+                       (erabiltzaileID, liburuID,))
 
         if len(em) == 0:
-            db.insert("INSERT INTO Erreseina (erreseinaID,puntuazioa,testua,likeKopurua) VALUES (?,?,?,?)",
-                      (erabiltzaileID, liburuID, puntuazioa, testua, 0))
+            db.insert("INSERT INTO Erreseina (erabiltzaileizena,liburuid,puntuazioa,testua,likeKopurua) VALUES (?,?,?,?,?)",
+                      (erabiltzaileID, liburuID, puntuazioa, testua, 0,))
         else:
-            db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileID = ? AND liburuID = ?",
-                      (puntuazioa, testua, erabiltzaileID, liburuID))
+            db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileizena = ? AND liburuID = ?",
+                      (puntuazioa, testua, erabiltzaileID, liburuID,))
 
     def erreseinaLikeGehitu(self, erabiltzaileID, liburuID):
-        em = db.select("UPDATE Erreseina SET likeKopurua = likeKopurua + 1 WHERE erabiltzaileID = ? AND liburuID = ?",
-                       (erabiltzaileID, liburuID))
+        em = db.select("UPDATE Erreseina SET likeKopurua = likeKopurua + 1 WHERE erabiltzaileizena = ? AND liburuID = ?",
+                       (erabiltzaileID, liburuID,))
 
     # ADMINISTRATZAILE FUNTZIOAK
 

@@ -35,7 +35,7 @@
             <input type="text" class="form-control mb-2" id="testua" name="testua" placeholder="erreseina egin" value="">
             <input type="number" class="form-control mb-2" id="balorazioa" name="balorazioa" placeholder="balorazioa" value="">
             <input type="hidden" class="form-control mb-2" id="erreseinaegin" name="erreseinaegin" placeholder="erreseinaegin" value="erreseinaegin">
-            <input type="hidden" class="form-control mb-2" id="liburuid" name="liburuid" placeholder="liburuid" value="Liburua[0]">
+            <input type="hidden" class="form-control mb-2" id="liburuid" name="liburuid" placeholder="liburuid" value="{{Liburua[0].id}}">
             <button type="submit" class="btn btn-primary">
                 Erreseina egin
             </button>
@@ -45,12 +45,11 @@
             <div>
                 <div>
                     <div>
-                        <h5 class="card-title">{{erreseina.erabiltzaileIzena}}</h5>
-                        <h5 class="card-title">{{erreseina.puntuazioa}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{erreseina.testua}}</h6>
-                        <h6 class="card-subtitle mb-2 text-muted">{{erreseina.likeKopurua}}</h6>
+                        <h5 class="card-title">Erabiltzailea: {{erreseina.erabiltzaileIzena}} | Puntuazioa: {{erreseina.puntuazioa}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.testua}}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.likeKopurua}}</h6>
                         <form class="form-inline" action="/liburua">
-                            <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{erreseina.erabiltzaileIzena}}">
+                            <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{Liburua[0].id}}">
                             <button type="submit" class="btn btn-primary">
                                 LIKE
                             </button>
