@@ -76,6 +76,10 @@ def liburua():
 		if erreseinaegin:
 			testua = request.values.get("testua", "")
 			balorazioa = request.values.get("balorazioa", "")
+			if int(balorazioa) > 10:
+				balorazioa = "10"
+			elif int(balorazioa) < 0:
+				balorazioa = "0"
 			liburuid = request.values.get("liburuid", "")
 			erreseinaEgin(user.username, liburuid, balorazioa, testua)
 			Liburua = liburuaIkusi(liburuid)
@@ -113,6 +117,26 @@ def erreserbak():
 			liburuaBueltatu(id, user.username)
 			lib = liburuKopiaIkusi(id)
 			erreseinak = erreseinakIkusi(lib.id)
+			erreseinaEgin(user.username, lib.id, "egin gabe", "")
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
+@app.route('/irakurritakoak')
+def irakurritakoak():
+	user = getActualUser()
+
+	if user:
+		id = request.values.get("id", "")
+		if id:
+			lib = liburuaIkusi(id)
+			erreseinak = erreseinakIkusi(id)
+			erreseinaEgin(user.username, id, "egin gabe", "")
 			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
 
 	else:
@@ -229,6 +253,7 @@ def perfila():
 		erabEzabatu = request.values.get("erabEzabatu", "")
 		libSortu = request.values.get("libSortu", "")
 		erreserbak = request.values.get("erreserbak", "")
+		irakurritakoak = request.values.get("irakurritakoak", "")
 
 		if erabSortu:
 			return redirect('/erabSortu')
@@ -238,6 +263,17 @@ def perfila():
 			return redirect('/libSortu')
 		elif erreserbak:
 			return redirect('/erreserbak')
+		elif irakurritakoak:
+			Erreseinak = erreseinakIkusiErabiltzaileko(user.username)
+			Liburua = [liburuaIkusi(e.libID) for e in Erreseinak]
+			return render_template('irakurritakoak.html', Liburua=Liburua)
+
+		id = request.values.get("id", "")
+		if id:
+			lib = liburuaIkusi(id)
+			erreseinak = erreseinakIkusi(id)
+			erreseinaEgin(user.username, id, "egin gabe", "")
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
 
 		resp = render_template('perfila.html', user=user)
 
@@ -339,6 +375,9 @@ def erreseinaEgin(erreseinaID, liburuID, puntuazioa, testua):
 
 def erreseinakIkusi(liburuID):
 	return LibraryController().getErreseinak(liburuID)
+
+def erreseinakIkusiErabiltzaileko(erabiltzaileizena):
+	return LibraryController().getErreseinakErabiltzaileko(erabiltzaileizena)
 
 def erreseinaLikeGehitu(erabiltzaileID, liburuID):
 	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)

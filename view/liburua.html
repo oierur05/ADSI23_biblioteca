@@ -35,35 +35,37 @@
          <form class="form-inline" action="/liburua">
              <h4 class="card-title">Erreseina egin: </h4>
             <input type="text" class="form-control mb-2" id="testua" name="testua" placeholder="erreseinaren testua" value="">
-            <input type="number" class="form-control mb-2" id="balorazioa" name="balorazioa" placeholder="balorazioa" value="">
+            <input type="number" class="form-control mb-2" id="balorazioa" name="balorazioa" placeholder="balorazioa (gutxienez 0 eta gehienez 10)" value="">
             <input type="hidden" class="form-control mb-2" id="erreseinaegin" name="erreseinaegin" placeholder="erreseinaegin" value="erreseinaegin">
             <input type="hidden" class="form-control mb-2" id="liburuid" name="liburuid" placeholder="liburuid" value="{{Liburua.id}}">
             <button type="submit" class="btn btn-primary">
                 Erreseina egin
             </button>
         </form>
+        <br>
         {% endif %}
-
+        <br>
         <hr>
 
         <h4 class="card-title">Erreseinak: </h4><br>
 
         {% for erreseina in Erreseinak %}
-            <div>
+            {% if erreseina.puntuazioa != "egin gabe": %}
+                <br>
                 <div>
-                    <div>
-                        <h5 class="card-title">Erabiltzailea: {{erreseina.erabiltzaileIzena}} | Puntuazioa: {{erreseina.puntuazioa}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.testua}}</h6>
-                        <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.likeKopurua}}</h6>
-                        <form class="form-inline" action="/liburua">
-                            <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{Liburua.id}}">
-                            <button type="submit" class="btn btn-primary">
-                                LIKE
-                            </button>
-                        </form>
-                    </div>
+                    <h5 class="card-title">Erabiltzailea: {{erreseina.erabiltzaileIzena}} | Puntuazioa: {{erreseina.puntuazioa}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.testua}}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.likeKopurua}}</h6>
+                    <form class="form-inline" action="/liburua">
+                        <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{Liburua.id}}">
+                        <button type="submit" class="btn btn-primary">
+                            LIKE
+                        </button>
+
+                    </form>
+                    <br>
                 </div>
-            </div>
+            {% endif %}
         {% endfor %}
     </div>
 
