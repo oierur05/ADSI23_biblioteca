@@ -59,4 +59,11 @@ class TestAdministratzailea(BaseTestClass):
         #           ez da erabiltzailea ezabatu
         #         zuzena:
         #           erabiltzailea ezabatu da
-        self.assertTrue(False)
+        params = {
+            'erabIzena': "3ne"
+        }
+        self.assertEqual(1, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("3ne",))[0][0])
+        self.sartu('juanbelio', 'juan')
+        res = self.client.get('/erabEzabatu', query_string=params)
+        self.assertEqual(302, res.status_code)
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("3ne",))[0][0])
