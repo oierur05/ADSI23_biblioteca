@@ -42,7 +42,7 @@ def catalogue():
 	if titulua:
 		Liburua, nb_books = library.getLiburuak(titulua)
 		erreseinak = erreseinakIkusi(Liburua[0].id)
-		return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+		return render_template('liburua.html', Liburua=Liburua[0], Erreseinak=erreseinak, bueltatu="False")
 	else:
 		izenburua = request.values.get("izenburua", "")
 		page = int(request.values.get("page", 1))
@@ -67,7 +67,9 @@ def liburua():
 
 		if like:
 			erreseinaLikeGehitu(user.username, like)
-			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+			Liburua = liburuaIkusi(like)
+			erreseinak = erreseinakIkusi(like)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
 
 		erreseinaegin = request.values.get("erreseinaegin", "")
 
@@ -76,7 +78,9 @@ def liburua():
 			balorazioa = request.values.get("balorazioa", "")
 			liburuid = request.values.get("liburuid", "")
 			erreseinaEgin(user.username, liburuid, balorazioa, testua)
-			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+			Liburua = liburuaIkusi(liburuid)
+			erreseinak = erreseinakIkusi(liburuid)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
 
 		return redirect("/catalogue")
 
@@ -107,12 +111,9 @@ def erreserbak():
 		id = request.values.get("id", "")
 		if id:
 			liburuaBueltatu(id, user.username)
-			return redirect('/erreserbak')
-		erreseina = request.values.get("erreseina", "")
-		if erreseina:
-			lib = liburuaIkusi(erreseina)
-			erreseinak = erreseinakIkusi(erreseina)
-			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak)
+			lib = liburuKopiaIkusi(id)
+			erreseinak = erreseinakIkusi(lib.id)
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
 
 	else:
 		if request.method == 'POST':
@@ -371,7 +372,7 @@ def liburuaBueltatu(liburuID, erabiltzaileID):
 	liburua.bueltatu(erabiltzaileID, liburuID)
 
 def liburuaIkusi(liburuID):
-	LibraryController().getLiburua(liburuID)
+	return LibraryController().getLiburua(liburuID)
 
 def liburuKopiaIkusi(liburuID):
 	return LibraryController().getLiburuKopia(liburuID)
