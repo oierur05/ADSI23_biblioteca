@@ -8,7 +8,7 @@ class TestErreserba(BaseTestClass):
 	def test_erreserben_historiala_kontsultatu(self):
 		# TODO: falta la parte de liburuak en html asiq...
 		# testak:
-		# 			historiala hutzik dauka
+		# 			historiala hutsik dauka
 		#			historiala dauka
 		self.assertTrue(False)
 
@@ -24,7 +24,7 @@ class TestErreserba(BaseTestClass):
 		# TODO: falta la parte de liburuak en html asiq...
 		# testak: okerra:
 		# 			liburua ez dago erreserbatuta
-		# 			liburua ez da existizen
+		# 			liburua ez da existitzen
 		#         zuzena:
-		# 			liburua existizen da eta erreserbatuta dago
+		# 			liburua existitzen da eta erreserbatuta dago
 		self.assertTrue(False)

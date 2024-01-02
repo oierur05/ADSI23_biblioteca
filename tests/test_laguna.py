@@ -9,12 +9,12 @@ class TestLagunak(BaseTestClass):
 		# TODO: falta la parte de lagunas en html asiq...
 		# testak: okerra:
 		# 			erabiltzailea ez da existitze
-		# 			erabiltzailea jaya zure laguna da
+		# 			erabiltzailea jada zure laguna da
 		# 			erabiltzailea zu zara
-		#			erabiltzailea jaya zure eskaera bat dauka
-		# 			erabiltzailea zuri eskaera bat bidali dizu
+		#			erabiltzaileak jada zure eskaera bat dauka
+		# 			erabiltzaileak zuri eskaera bat bidali dizu
 		#         zuzena:
-		# 			erailtzailea existitzen da, ez da zure laguna eta ez da zure berdina
+		# 			erabiltzailea existitzen da, ez da zure laguna eta ez da zure berdina
 		self.assertTrue(False)
 
 	def test_eskaerak_kontsultatu(self):
