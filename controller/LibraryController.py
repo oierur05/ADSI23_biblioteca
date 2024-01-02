@@ -124,6 +124,10 @@ class LibraryController:
             db.update("UPDATE Erreseina SET puntuazioa = ?, testua = ? WHERE erabiltzaileID = ? AND liburuID = ?",
                       (puntuazioa, testua, erabiltzaileID, liburuID))
 
+    def erreseinaLikeGehitu(self, erabiltzaileID, liburuID):
+        em = db.select("UPDATE Erreseina SET likeKopurua = likeKopurua + 1 WHERE erabiltzaileID = ? AND liburuID = ?",
+                       (erabiltzaileID, liburuID))
+
     # ADMINISTRATZAILE FUNTZIOAK
 
     def liburuBerriaGehitu(self, portada, izenburua, urtea, idazlea, sinopsia, PDF):

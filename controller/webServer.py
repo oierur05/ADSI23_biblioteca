@@ -310,11 +310,14 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 
 # ERRESEINAK
 
-def erreseinaEgin(erreseinaID, puntuazioa, testua):
-	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
+def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
+	LibraryController().erreseinaEguneratu(erabiltzaileID,puntuazioa,testua)
 
 def erreseinakIkusi(erabiltzaileID, liburuID):
 	LibraryController().getErreseinak(erabiltzaileID, liburuID)
+
+def erreseinaLikeGehitu(erabiltzaileID, liburuID):
+	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 

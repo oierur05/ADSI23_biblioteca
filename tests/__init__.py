@@ -16,5 +16,6 @@ class BaseTestClass(unittest.TestCase):
 			erabiltzaileID=erabiltzaileID,
 			password=password
 		))
+
 	def logout(self):
 		return self.client.post('/logout?path={{request.path}}')
