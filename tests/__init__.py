@@ -11,8 +11,10 @@ class BaseTestClass(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def login(self, email, password):
+	def login(self, erabiltzaileID, password):
 		return self.client.post('/login', data=dict(
-			email=email,
+			erabiltzaileID=erabiltzaileID,
 			password=password
 		))
+	def logout(self):
+		return self.client.post('/logout?path={{request.path}}')
