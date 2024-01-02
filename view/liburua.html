@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+
+            <div>
+                <div>
+                    <center>
+                    {% if Liburua[0].portada: %}
+                        <img src="{{Liburua[0].portada}}" class="rounded" style="max-width: 20rem; height: fit-content;">
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title">{{Liburua[0].izenburua}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{Liburua[0].idazlea}}</h6>
+                        {% if Liburua[0].sinopsia: %}
+                        <p class="card-text">{{Liburua[0].sinopsia}}</p>
+                        {% endif %}
+                    </div>
+                        <form class="form-inline" action="/liburua">
+                            <input type="hidden" class="form-control mb-2" id="titulua" name="titulua" placeholder="liburu izena" value="{{Liburua[0].izenburua}}">
+                            <button type="submit" class="btn btn-primary">
+                                Erreserbatu
+                            </button>
+                        </form>
+                    </center>
+                </div>
+
+            </div>
+
+         <form class="form-inline" action="/liburua">
+            <input type="text" class="form-control mb-2" id="testua" name="testua" placeholder="erreseina egin" value="">
+            <input type="number" class="form-control mb-2" id="balorazioa" name="balorazioa" placeholder="balorazioa" value="">
+            <input type="hidden" class="form-control mb-2" id="erreseinaegin" name="erreseinaegin" placeholder="erreseinaegin" value="erreseinaegin">
+            <input type="hidden" class="form-control mb-2" id="liburuid" name="liburuid" placeholder="liburuid" value="{{Liburua[0].id}}">
+            <button type="submit" class="btn btn-primary">
+                Erreseina egin
+            </button>
+        </form>
+
+        {% for erreseina in Erreseinak %}
+            <div>
+                <div>
+                    <div>
+                        <h5 class="card-title">Erabiltzailea: {{erreseina.erabiltzaileIzena}} | Puntuazioa: {{erreseina.puntuazioa}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.testua}}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.likeKopurua}}</h6>
+                        <form class="form-inline" action="/liburua">
+                            <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{Liburua[0].id}}">
+                            <button type="submit" class="btn btn-primary">
+                                LIKE
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

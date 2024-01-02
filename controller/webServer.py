@@ -37,43 +37,226 @@ def index():
 
 @app.route('/catalogue')
 def catalogue():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
-	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
-	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+	titulua = request.values.get("titulua", "")
+
+	if titulua:
+		Liburua, nb_books = library.getLiburuak(titulua)
+		erreseinak = erreseinakIkusi(Liburua[0].id)
+		return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+	else:
+		izenburua = request.values.get("izenburua", "")
+		page = int(request.values.get("page", 1))
+		Liburua, nb_books = library.getLiburuak(izenburua)
+		total_pages = (nb_books // 6) + 1
+		return render_template('catalogue.html', Liburua=Liburua, izenburua=izenburua, current_page=page,
+							   total_pages=total_pages, max=max, min=min)
+
+@app.route('/liburua')
+def liburua():
+	user = getActualUser()
+	if user:
+		titulua = request.values.get("titulua", "")
+		#return f"titulua? {titulua}"
+		if titulua:
+			Liburua, nb_books = library.getLiburuak(titulua)
+			#return f"liburua? {Liburua[0]}"
+			liburuaErreserbatu(Liburua[0].id, user.username)
+			return redirect('/erreserbak')
+
+		like = request.values.get("like", "")
+
+		if like:
+			erreseinaLikeGehitu(user.username, like)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+
+		erreseinaegin = request.values.get("erreseinaegin", "")
+
+		if erreseinaegin:
+			testua = request.values.get("testua", "")
+			balorazioa = request.values.get("balorazioa", "")
+			liburuid = request.values.get("liburuid", "")
+			erreseinaEgin(user.username, liburuid, balorazioa, testua)
+			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
+
+		return redirect("/catalogue")
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			return redirect('/login')
+
+	return redirect("/catalogue")
+
+@app.route('/erreserbak')
+def erreserbak():
+	user = getActualUser()
+
+	if user:
+		Erreserbak = erreserbakIkusi(user.username)
+		Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+		class Mezcla:
+			def __init__(self, lib, erre):
+				self.lib = lib
+				self.erre = erre
+
+		Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+		resp = render_template('erreserbak.html', Info=Info)
+		id = request.values.get("id", "")
+		if id:
+			liburuaBueltatu(id, user.username)
+			return redirect('/erreserbak')
+		erreseina = request.values.get("erreseina", "")
+		if erreseina:
+			lib = liburuaIkusi(erreseina)
+			erreseinak = erreseinakIkusi(erreseina)
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak)
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/foroak')
 def foroak():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
+	izenburua = request.values.get("izenburua", "")
 	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
+	Foroa, nb_books = library.getForoak(izenburua)
 	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
+	return render_template('foroak.html', Foroa=Foroa, izenburua=izenburua, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
+
+@app.route('/libSortu')
+def libSortu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			izena = request.values.get("izena", "")
+			argazkia = request.values.get("argazkia", "")
+			idazlea = request.values.get("idazlea", "")
+			urtea = request.values.get("urtea", "")
+			sinopsia = request.values.get("sinopsia", "")
+			pdf = request.values.get("pdf", "")
+
+			if izena and argazkia and idazlea and urtea and sinopsia and pdf:
+				liburuBerriaGehitu(argazkia, izena, urtea, idazlea, sinopsia, pdf)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('libSortu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
+@app.route('/erabEzabatu')
+def erabEzabatu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			erabIzena = request.values.get("erabIzena", "")
+			if erabIzena:
+				erabiltzaileaEzabatu(erabIzena)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('erabEzabatu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
+@app.route('/erabSortu',  methods=['GET', 'POST'])
+def erabSortu():
+	user = getActualUser()
+	if user:
+		if user.administratzaileaDa:
+			izenabizen = request.values.get("izenabizen", "")
+			argazkia = request.values.get("argazkia", "")
+			nan = request.values.get("nan", "")
+			telefonoa = request.values.get("telefonoa", "")
+			helbidea = request.values.get("helbidea", "")
+			posta = request.values.get("posta", "")
+			erabIzena = request.values.get("erabIzena", "")
+			pasahitza = request.values.get("pasahitza", "")
+			admin = request.form.get("admin", "")
+
+			if izenabizen and argazkia and nan and telefonoa and helbidea and posta and erabIzena and pasahitza:
+				if admin:
+					adminDa = "True"
+				else:
+					adminDa = "False"
+				erabiltzaileBerriaSortu(erabIzena, izenabizen, pasahitza, nan, telefonoa, posta, helbidea, argazkia,
+										adminDa)
+				return redirect('/perfila')
+
+			atzera = request.values.get("atzera", "")
+
+			if atzera:
+				return redirect('/perfila')
+
+			resp = render_template('erabSortu.html')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/perfila')
 def perfila():
-	title = request.values.get("title", "")
-	author = request.values.get("author", "")
-	page = int(request.values.get("page", 1))
-	books, nb_books = library.search_books(title=title, author=author, page=page - 1)
-	total_pages = (nb_books // 6) + 1
-	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+
+	user = getActualUser()
+
+	if user:
+		erabSortu = request.values.get("erabSortu", "")
+		erabEzabatu = request.values.get("erabEzabatu", "")
+		libSortu = request.values.get("libSortu", "")
+		erreserbak = request.values.get("erreserbak", "")
+
+		if erabSortu:
+			return redirect('/erabSortu')
+		elif erabEzabatu:
+			return redirect('/erabEzabatu')
+		elif libSortu:
+			return redirect('/libSortu')
+		elif erreserbak:
+			return redirect('/erreserbak')
+
+		resp = render_template('perfila.html', user=user)
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
 		return redirect('/')
 	erabiltzaileID = request.values.get("erabiltzaileID", "")
-	user = library.getErabiltzaile(erabiltzaileID)
+	password = request.values.get("password", "")
+	user = library.getErabiltzaile(erabiltzaileID, password)
 	if user:
-		session = user.new_session()
-		resp = redirect("/")
+		session = user.sortuSaioa()
+		resp = redirect('/perfila')
 		resp.set_cookie('token', session.hash)
 		resp.set_cookie('time', str(session.time))
 	else:
@@ -140,7 +323,7 @@ def lagunEskaeraBidali(igorleID, jasotzaileID):
 # ERRESERBAK
 
 def erreserbakIkusi(erabiltzaileID):
-	LibraryController().getErreserbak(erabiltzaileID)
+	return LibraryController().getErreserbak(erabiltzaileID)
 
 def liburuaErreserbatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(liburuID)
@@ -150,11 +333,14 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 
 # ERRESEINAK
 
-def erreseinaEgin(erreseinaID, puntuazioa, testua):
-	LibraryController().erreseinaEguneratu(erreseinaID,puntuazioa,testua)
+def erreseinaEgin(erreseinaID, liburuID, puntuazioa, testua):
+	LibraryController().erreseinaEguneratu(erreseinaID, liburuID, puntuazioa, testua)
 
-def erreseinakIkusi(erabiltzaileID, liburuID):
-	LibraryController().getErreseinak(erabiltzaileID, liburuID)
+def erreseinakIkusi(liburuID):
+	return LibraryController().getErreseinak(liburuID)
+
+def erreseinaLikeGehitu(erabiltzaileID, liburuID):
+	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
@@ -162,11 +348,11 @@ def liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF):
 	LibraryController().liburuBerriaGehitu(portada, izenburua, urtea, idazlea, sinopsia, PDF)
 
 def erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa):
-	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan,
-												tel, pElek, helb, argazkia, administratzaileaDa)
+	LibraryController().erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa)
 
 def erabiltzaileaEzabatu(eIzena):
 	LibraryController().erabiltzaileaEzabatu(eIzena)
+
 
 # ERABILTZAILEAK
 
@@ -179,10 +365,13 @@ def liburuKatalogoanBilatu(hitzGako):
 	LibraryController().getLiburuak(hitzGako)
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
-	liburua = LibraryController().getLiburua(liburuID)
+	liburua = LibraryController().getLiburua(LibraryController().getLiburuKopiaID(liburuID))
 	if liburua is None:
 		return
-	liburua.bueltatu(erabiltzaileID)
+	liburua.bueltatu(erabiltzaileID, liburuID)
 
 def liburuaIkusi(liburuID):
 	LibraryController().getLiburua(liburuID)
+
+def liburuKopiaIkusi(liburuID):
+	return LibraryController().getLiburuKopia(liburuID)

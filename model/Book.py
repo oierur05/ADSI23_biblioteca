@@ -26,27 +26,33 @@ class Book:
 		self._author = value
 
 	def __str__(self):
-		return f"{self.title} ({self.author})"
+		return f"{self.id}"
 
 	def erreserbatu(self, erabiltzaileID):
-		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
+		liburuIDLista = db.select("SELECT * from Kopiafisikoa WHERE liburuid = ?", (self.id,))
 		if len(liburuIDLista) == 0:
 			return
 
-		liburuID = liburuIDLista[0][0]
-		now = datetime.datetime.now()
+		liburuid = -1
+		for k in liburuIDLista:
+			res = db.select("SELECT * FROM Erreserba WHERE kopiafisikoid = ?", (k[0],))
+			if len(res) == 0:
+				liburuid = k[0]
+
+		if liburuid == -1:
+			return
+
+		now = datetime.datetime.now().date()
 		end = now + datetime.timedelta(days=14)
-		now = float(now.time().strftime("%Y%m%d%H%M%S.%f"))
-		end = float(end.time().strftime("%Y%m%d%H%M%S.%f"))
 
-		db.insert("INSERT INTO Erreserba VALUES (?, ?, ?, ?)", (liburuID, erabiltzaileID, now, end))
+		db.insert("INSERT INTO Erreserba VALUES (?, ?, ?, ?)", (liburuid, erabiltzaileID, now, end,))
 
-	def bueltatu(self, erabiltzaileID):
-		liburuIDLista = db.select("SELECT * from KopiaFisikoa WHERE liburuID = ?", (self.id))
-		if len(liburuIDLista) == 0:
-			return
+	def bueltatu(self, erabiltzaileID, kopiaid):
+		#liburuIDLista = db.select("SELECT * from Kopiafisikoa WHERE liburuid = ?", (self.id,))
+		#if len(liburuIDLista) == 0:
+		#	return
 
-		liburuID = liburuIDLista[0][0]
+		#liburuID = liburuIDLista[0][0]
 
-		db.delete("DELETE FROM Erreserba WHERE kopiaFisikoID = ? AND erabiltzaileIzena = ?",
-				  (liburuID,erabiltzaileID))
+		db.delete("DELETE FROM Erreserba WHERE kopiafisikoid = ? AND erabiltzaileizena = ?",
+				  (kopiaid,erabiltzaileID,))

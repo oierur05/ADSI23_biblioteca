@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+    <center>
+        <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+
+            <form method="post" class="form-inline">
+                <input type="text" class="form-control mb-2" id="izenabizen" name="izenabizen" placeholder="izen abizenak" value=""> <br>
+                <input type="text" class="form-control mb-2" id="argazkia" name="argazkia" placeholder="argazkia" value=""> <br>
+                <input type="text" class="form-control mb-2" id="nan" name="nan" placeholder="nan" value=""> <br>
+                <input type="number" class="form-control mb-2" id="telefonoa" name="telefonoa" placeholder="telefonoa" value=""> <br>
+                <input type="text" class="form-control mb-2" id="helbidea" name="helbidea" placeholder="helbidea" value=""> <br>
+                <input type="email" class="form-control mb-2" id="posta" name="posta" placeholder="posta elektronikoa" value=""> <br>
+                <input type="text" class="form-control mb-2" id="erabIzena" name="erabIzena" placeholder="erabiltzaile izena" value=""> <br>
+                <input type="password" class="form-control mb-2" id="pasahitza" name="pasahitza" placeholder="pasahitza" value=""> <br>
+                Administratzailea da? <input type="checkbox" id="admin" name="admin"> <br><br>
+                <button type="submit" class="btn btn-primary">
+                    Sortu
+                </button> <br>
+            </form>
+
+            <form class="form-inline">
+                <input type="hidden" class="form-control mb-2" id="atzera" name="atzera" placeholder="atzera" value="atzera">
+                <br> <button type="submit" class="btn btn-primary">
+                    Atzera
+                </button>
+            </form>
+
+        </div>
+    </center>
+    </div>
+
+</div>
+
+{% endblock %}
