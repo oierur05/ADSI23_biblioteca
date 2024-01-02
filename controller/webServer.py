@@ -41,7 +41,8 @@ def catalogue():
 
 	if titulua:
 		Liburua, nb_books = library.getLiburuak(titulua)
-		return render_template('liburua.html', Liburua=Liburua)
+		erreseinak = erreseinakIkusi(Liburua[0].id)
+		return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak)
 	else:
 		izenburua = request.values.get("izenburua", "")
 		page = int(request.values.get("page", 1))
@@ -61,8 +62,23 @@ def liburua():
 			#return f"liburua? {Liburua[0]}"
 			liburuaErreserbatu(Liburua[0].id, user.username)
 			return redirect('/erreserbak')
-		else:
-			return redirect("/catalogue")
+
+		like = request.values.get("like", "")
+
+		#if like:
+		#	likeEman(like)
+
+		erreseinaegin = request.values.get("erreseinaegin", "")
+
+		if erreseinaegin:
+			testua = request.values.get("testua", "")
+			balorazioa = request.values.get("balorazioa", "")
+			liburuid = request.values.get("liburuid", "")
+
+			erreseinaEgin(user.username, liburuid, balorazioa, testua)
+
+		return redirect("/catalogue")
+
 	else:
 		if request.method == 'POST':
 			return redirect('/login')
@@ -90,6 +106,11 @@ def erreserbak():
 		if id:
 			liburuaBueltatu(id, user.username)
 			return redirect('/erreserbak')
+		erreseina = request.values.get("erreseina", "")
+		if erreseina:
+			lib = liburuaIkusi(erreseina)
+			erreseinak = erreseinakIkusi(erreseina)
+			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak)
 
 	else:
 		if request.method == 'POST':
@@ -310,14 +331,11 @@ def liburuaErreserbatu(liburuID, erabiltzaileID):
 
 # ERRESEINAK
 
-def erreseinaEgin(erabiltzaileID, puntuazioa, testua):
-	LibraryController().erreseinaEguneratu(erabiltzaileID,puntuazioa,testua)
+def erreseinaEgin(erreseinaID, liburuID, puntuazioa, testua):
+	LibraryController().erreseinaEguneratu(erreseinaID, liburuID, puntuazioa, testua)
 
-def erreseinakIkusi(erabiltzaileID, liburuID):
-	LibraryController().getErreseinak(erabiltzaileID, liburuID)
-
-def erreseinaLikeGehitu(erabiltzaileID, liburuID):
-	LibraryController().erreseinaLikeGehitu(erabiltzaileID, liburuID)
+def erreseinakIkusi(liburuID):
+	return LibraryController().getErreseinak(liburuID)
 
 # ADMINISTRATZAILE FUNTZIOAK
 
