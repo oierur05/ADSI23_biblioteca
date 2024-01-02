@@ -20,6 +20,12 @@
                             Erreserbak ikusi
                         </button>
                     </form>
+                    <form class="form-inline"> <br>
+                        <input type="hidden" class="form-control mb-2" id="irakurrita" name="irakurrita" placeholder="irakurrita" value="irakurrita">
+                        <button type="submit" class="btn btn-primary">
+                            Irakurritako liburuak ikusi
+                        </button>
+                    </form>
                     {% if user.administratzaileaDa == "True" %}
                         <div class="card-body">
                             <hr>
@@ -47,11 +53,8 @@
                 </div>
             </div>
         </div>
-
-
     </center>
     </div>
-
 </div>
 
 {% endblock %}
