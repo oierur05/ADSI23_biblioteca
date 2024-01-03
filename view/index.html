@@ -2,6 +2,14 @@
 
 {% block content %}
 <div class="container p-5 my-5 border">
-    <h1>The best library</h1>
+    <center>
+        <h1>ONLINE LIBURUTEGIA</h1>
+        <br>
+        <h5>
+        <br><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page">Home</a>
+        <br><a href="/catalogue" class="nav-link {% if request.path == '/catalogue' %}active{% endif %}">Katalogoa</a>
+        <br><a href="/foroak" class="nav-link {% if request.path == '/foroak' %}active{% endif %}">Foroak</a>
+        </h5>
+    </center>
 </div>
 {% endblock %}

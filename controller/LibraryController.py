@@ -1,4 +1,5 @@
 import uuid
+import datetime
 
 from model import Connection, Book, User
 from model.Erreseina import Erreseina
@@ -61,7 +62,7 @@ class LibraryController:
 
     # FOROAK
     def getForoa(self, foroID):
-        foroLista = db.select("SELECT * from Foroa WHERE id = ?", (foroID))
+        foroLista = db.select("SELECT * from Foroa WHERE id = ?", (foroID,))
 
         if len(foroLista) == 0:
             return None
@@ -84,8 +85,8 @@ class LibraryController:
         return [Foroa(f[0], f[1], f[2], f[3], f[4]) for f in foroLista], count
 
     def foroaSortu(self, fIzena, eIzena, deskribapena):
-        db.insert("INSERT INTO Foroa VALUES(?,?,?,?)",
-                  (self.idBerria(db.select("SELECT foroID FROM FOROA")), fIzena, eIzena, deskribapena))
+        db.insert("INSERT INTO Foroa VALUES(?,?,?,?,?)",
+                  (self.idBerria(db.select("SELECT id FROM Foroa")), eIzena, fIzena, deskribapena, datetime.datetime.now().date()))
 
     # LAGUNAK
 
@@ -166,9 +167,10 @@ class LibraryController:
             lID = self.idBerria([i[0] for i in db.select("SELECT liburuID FROM LIBURUA")])
             db.insert("INSERT INTO Liburua VALUES(?,?,?,?,?,?,?)",
                       (lID, portada, izenburua, urtea, idazlea, sinopsia, PDF,))
-            kID = self.idBerria([i[0] for i in db.select("SELECT kopiaid FROM Kopiafisikoa")])
-            db.insert("INSERT INTO Kopiafisikoa VALUES(?,?)",
-                      (kID, lID,))
+            for _ in range(5):
+                kID = self.idBerria([i[0] for i in db.select("SELECT kopiaid FROM Kopiafisikoa")])
+                db.insert("INSERT INTO Kopiafisikoa VALUES(?,?)",
+                          (kID, lID,))
         else:
             raise Exception("ID hau duen liburu bat existitzen da jada.")
 

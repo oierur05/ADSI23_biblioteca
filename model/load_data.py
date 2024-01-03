@@ -29,7 +29,7 @@ cur.execute("""
 	)
 """)
 
-#cur.execute("""DELETE FROM Laguna""")
+#cur.execute("""DELETE FROM Erabiltzailea WHERE administratzaileada='True'""")
 #con.commit()
 
 cur.execute("""

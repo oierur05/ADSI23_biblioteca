@@ -16,7 +16,7 @@ class Foroa:
 		return f"{self.foroID}:{self.izena}"
 
 	def getMezuak(self):
-		s = db.select("SELECT * from Mezua WHERE foroID = ?", (self.foroID))
+		s = db.select("SELECT * from Mezua WHERE foroID = ?", (self.foroID,))
 		return [Mezua(m[0], m[2], m[3]) for m in s]
 
 	def gehituMezua(self, eIzena, testua):
