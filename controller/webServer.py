@@ -40,16 +40,88 @@ def catalogue():
 	titulua = request.values.get("titulua", "")
 
 	if titulua:
-		Liburua, nb_books = library.getLiburuak(titulua)
+		Liburua, nb_books = liburuKatalogoanBilatu(titulua)
 		erreseinak = erreseinakIkusi(Liburua[0].id)
 		return render_template('liburua.html', Liburua=Liburua[0], Erreseinak=erreseinak, bueltatu="False")
 	else:
 		izenburua = request.values.get("izenburua", "")
 		page = int(request.values.get("page", 1))
-		Liburua, nb_books = library.getLiburuak(izenburua)
+		Liburua, nb_books = liburuKatalogoanBilatu(izenburua)
 		total_pages = (nb_books // 6) + 1
 		return render_template('catalogue.html', Liburua=Liburua, izenburua=izenburua, current_page=page,
 							   total_pages=total_pages, max=max, min=min)
+
+@app.route('/lagunak')
+def lagunak():
+	user = getActualUser()
+	if user:
+
+		Eskaerak = lagunEskaerakLortu(user.username)
+		Lagunak = lagunakLortu(user.username)
+
+		lagunIzena = request.values.get("lagunIzena", "")
+
+		if lagunIzena:
+			Bilatua = erabiltzaileaBilatu(lagunIzena)
+			return render_template('lagunak.html', User=Bilatua, Eskaerak=Eskaerak, Lagunak=Lagunak)
+
+		eskBidali = request.values.get("eskBidali", "")
+
+		if eskBidali:
+			if not lagunakDira(user.username, eskBidali) and user.username != eskBidali:
+				lagunEskaeraBidali(user.username, eskBidali)
+
+
+		onartu = request.values.get("onartu", "")
+
+		if onartu:
+			lagunEskaeraBidali(user.username, onartu)
+			lagunEskaeraKudeatu(True, user.username, onartu)
+			Eskaerak = lagunEskaerakLortu(user.username)
+			Lagunak = lagunakLortu(user.username)
+			return render_template('lagunak.html', User=None, Eskaerak=Eskaerak, Lagunak=Lagunak)
+
+		ezeztatu = request.values.get("ezeztatu", "")
+
+		if ezeztatu:
+			lagunEskaeraKudeatu(False, user.username, ezeztatu)
+			Eskaerak = lagunEskaerakLortu(user.username)
+			Lagunak = lagunakLortu(user.username)
+			return render_template('lagunak.html', User=None, Eskaerak=Eskaerak, Lagunak=Lagunak)
+
+		bisitatu = request.values.get("bisitatu", "")
+
+		if bisitatu:
+			laguna = erabiltzaileaBilatu(bisitatu)
+			lagunarenLagunak = lagunakLortu(bisitatu)
+			Erreserbak = erreserbakIkusi(bisitatu)
+			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+			class Mezcla:
+				def __init__(self, lib, erre):
+					self.lib = lib
+					self.erre = erre
+
+			Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+			Erreseinak = erreseinakIkusiErabiltzaileko(bisitatu)
+			ErreseinaLiburua = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			InfoErreseinak = [Mezcla(ErreseinaLiburua[e], Erreseinak[e]) for e in range(len(Erreseinak))]
+
+			irakurritakoLiburuak = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			return render_template('perfilabisitatu.html', user=laguna, Lagunak=lagunarenLagunak, Info=Info, Liburua=irakurritakoLiburuak, Erreseinak=InfoErreseinak)
+
+		return render_template('lagunak.html', User=None, Eskaerak=Eskaerak, Lagunak=Lagunak)
+
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			return redirect('/login')
+
+	return redirect("/catalogue")
 
 @app.route('/liburua')
 def liburua():
@@ -58,7 +130,7 @@ def liburua():
 		titulua = request.values.get("titulua", "")
 		#return f"titulua? {titulua}"
 		if titulua:
-			Liburua, nb_books = library.getLiburuak(titulua)
+			Liburua, nb_books = liburuKatalogoanBilatu(titulua)
 			#return f"liburua? {Liburua[0]}"
 			liburuaErreserbatu(Liburua[0].id, user.username)
 			return redirect('/erreserbak')
@@ -150,7 +222,7 @@ def irakurritakoak():
 def foroak():
 	izenburua = request.values.get("izenburua", "")
 	page = int(request.values.get("page", 1))
-	Foroa, nb_books = library.getForoak(izenburua)
+	Foroa, nb_books = foroKatalogoanForoBilatu(izenburua)
 	total_pages = (nb_books // 6) + 1
 	return render_template('foroak.html', Foroa=Foroa, izenburua=izenburua, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
@@ -254,6 +326,7 @@ def perfila():
 		libSortu = request.values.get("libSortu", "")
 		erreserbak = request.values.get("erreserbak", "")
 		irakurritakoak = request.values.get("irakurritakoak", "")
+		lagunak = request.values.get("lagunak", "")
 
 		if erabSortu:
 			return redirect('/erabSortu')
@@ -267,6 +340,8 @@ def perfila():
 			Erreseinak = erreseinakIkusiErabiltzaileko(user.username)
 			Liburua = [liburuaIkusi(e.libID) for e in Erreseinak]
 			return render_template('irakurritakoak.html', Liburua=Liburua)
+		elif lagunak:
+			return redirect('/lagunak')
 
 		id = request.values.get("id", "")
 		if id:
@@ -328,8 +403,7 @@ def getActualUser():
 # FOROAK
 
 def foroKatalogoanForoBilatu(hitzGako):
-	LibraryController().getForoak(hitzGako)
-
+	return LibraryController().getForoak(hitzGako)
 
 def foroaBerriaSortu(fIzena, eIzena, deskribapena):
 	LibraryController().foroaSortu(fIzena, eIzena, deskribapena)
@@ -348,14 +422,23 @@ def ikusiForoa(foroID):
 
 # LAGUNAK
 
-def lagunEskaeraKudeatu(onartuDa, aErabiltzaileaID, bErabiltzaileaID):
-	user = LibraryController().erabiltzaileBilatu(aErabiltzaileaID)
+def lagunEskaeraKudeatu(onartuDa, igorleID, jasotzaileID):
+	user = LibraryController().erabiltzaileBilatu(igorleID)
 	if user is None:
 		return
-	user.eskaeraKudeatu(onartuDa, bErabiltzaileaID)
+	user.eskaeraKudeatu(onartuDa, jasotzaileID)
 
 def lagunEskaeraBidali(igorleID, jasotzaileID):
 	LibraryController().setLagunEskaera(igorleID, jasotzaileID)
+
+def lagunEskaerakLortu(jasotzaileID):
+	return LibraryController().getLagunEskaerak(jasotzaileID)
+
+def lagunakLortu(jasotzaileID):
+	return LibraryController().getLagunak(jasotzaileID)
+
+def lagunakDira(igorleID, jasotzaileID):
+	return LibraryController().getLagunakDira(igorleID, jasotzaileID)
 
 # ERRESERBAK
 
@@ -397,12 +480,12 @@ def erabiltzaileaEzabatu(eIzena):
 # ERABILTZAILEAK
 
 def erabiltzaileaBilatu(eIzena):
-	LibraryController().erabiltzaileBilatu(eIzena)
+	return LibraryController().erabiltzaileBilatu(eIzena)
 
 # LIBURUAK
 
 def liburuKatalogoanBilatu(hitzGako):
-	LibraryController().getLiburuak(hitzGako)
+	return LibraryController().getLiburuak(hitzGako)
 
 def liburuaBueltatu(liburuID, erabiltzaileID):
 	liburua = LibraryController().getLiburua(LibraryController().getLiburuKopiaID(liburuID))
