@@ -27,9 +27,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{book.izenburua}}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{book.idazlea}}</h6>
-                        {% if book.sinopsia: %}
-                        <p class="card-text">{{book.sinopsia}}</p>
-                        {% endif %}
+                        <p class="card-text">{{book.urtea}}</p>
                         <form class="form-inline" action="/catalogue">
                             <input type="hidden" class="form-control mb-2" id="titulua" name="titulua" placeholder="liburu izena" value="{{book.izenburua}}">
                             <button type="submit" class="btn btn-primary">
