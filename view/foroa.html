@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+        <center>
+        <div>
+            <h1 class="card-title">{{Foroa.izena}}</h1>
+            <p class="card-text">{{Foroa.deskribapena}}</p>
+            <h3 class="card-subtitle mb-2 text-muted">Egilea: {{Foroa.erabiltzaileIzena}}</h3>
+            <p class="card-text">{{Foroa.sorreraData}}</p>
+        </div>
+            <hr>
+            <form class="form-inline" action="/foroa">
+                <h4 class="card-title">Mezu berria jarri: </h4>
+                <br>
+                <input type="text" class="form-control mb-2" id="mezua" name="mezua" placeholder="mezua" value="">
+                <input type="hidden" class="form-control mb-2" id="foroID" name="foroID" placeholder="foroID" value="{{Foroa.foroID}}">
+                <button type="submit" class="btn btn-primary">
+                    Mezua jarri
+                </button>
+            </form>
+            <br>
+        </center>
+        <hr>
+        <h4 class="card-title">Mezuak: </h4><br>
+
+        {% if Mezuak %}
+        {% for mez in Mezuak %}
+            <br>
+            <div>
+                <h5 class="card-title">Mezua: {{mez.testua}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Erabiltzailea: {{mez.erabiltzaileIzena}}</h6>
+                <form class="form-inline" action="/foroa">
+                    <input type="hidden" class="form-control mb-2" id="bisitatu" name="bisitatu" placeholder="bisitatu" value="{{mez.erabiltzaileIzena}}">
+                    <button type="submit" class="btn btn-primary">
+                        Bisitatu perfila
+                    </button>
+                </form>
+                <br>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
