@@ -37,12 +37,13 @@ class TestErreserba(BaseTestClass):
 			'titulua': "Ligeros libertinajes sabaticos"
 		}
 		res = self.client.get('/erreserbak')
+		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
 						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
-		res = self.client.get('/catalogue')#, query_string = params)
+		res = self.client.get('/catalogue')
 		self.assertEqual(200, res.status_code)
-		res = self.client.get('/liburua', query_string = params)
+		res = self.client.get('/liburua', query_string=params)
 		self.assertEqual(302, res.status_code)
 		res = self.client.get('/erreserbak')
 		page = BeautifulSoup(res.data, features="html.parser")
@@ -50,12 +51,14 @@ class TestErreserba(BaseTestClass):
 						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
 		# liburu bat kendu
 		res = self.client.get('/erreserbak')
+		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		lid = page.find('h5', class_='card-title')
 		params = {
 			'id': str(lid.text.split()[-1])
 		}
 		res = self.client.get('/erreserbak', query_string = params)
+		self.assertEqual(200, res.status_code)
 		res = self.client.get('/erreserbak')
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
