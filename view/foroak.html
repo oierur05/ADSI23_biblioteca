@@ -16,6 +16,18 @@
 
     <hr class="hr" />
 
+    <br>
+
+    <form class="form-inline">
+        <input type="text" class="form-control mb-2" id="foroSortu" name="foroSortu" placeholder="Foro berriaren izena jarri" value="">
+        <input type="text" class="form-control mb-2" id="foroDeskr" name="foroDeskr" placeholder="Foro berriaren deskribapena jarri" value=""> <br>
+        <button type="submit" class="btn btn-primary">
+            Sortu
+        </button>
+    </form>
+
+    <hr class="hr" />
+
     <div class="row">
 
         {% for foro in Foroa %}
@@ -27,6 +39,12 @@
                         {% if foro.deskribapena: %}
                         <p class="card-text">{{foro.deskribapena}}</p>
                         {% endif %}
+                        <form class="form-inline">
+                            <input type="hidden" class="form-control mb-2" id="foroID" name="foroID" placeholder="foroID" value="{{foro.foroID}}"> <br>
+                            <button type="submit" class="btn btn-primary">
+                                Ireki
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
