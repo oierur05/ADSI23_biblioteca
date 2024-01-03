@@ -171,8 +171,6 @@ class LibraryController:
                 kID = self.idBerria([i[0] for i in db.select("SELECT kopiaid FROM Kopiafisikoa")])
                 db.insert("INSERT INTO Kopiafisikoa VALUES(?,?)",
                           (kID, lID,))
-        else:
-            raise Exception("ID hau duen liburu bat existitzen da jada.")
 
     def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan,
                                                          tel, pElek, helb, argazkia, administratzaileaDa):
@@ -180,14 +178,10 @@ class LibraryController:
         if erabiltzaileak == 0:
             db.insert("INSERT INTO Erabiltzailea VALUES (?,?,?,?,?,?,?,?,?)",
                       (eIzena, izenAbizenak, pasahitza, nan, tel, pElek, helb, argazkia, administratzaileaDa,))
-        else:
-            raise Exception("Erabiltzailea jadanik existitzen zen.")
 
     def erabiltzaileaEzabatu(self, eIzena):
         erabiltzaileak = db.select("SELECT count(erabiltzaileizena) FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))[0][0]
-        if erabiltzaileak == 0:
-            raise Exception("Erabiltzailea ez da existitzen.")
-        else:
+        if erabiltzaileak != 0:
             db.delete("DELETE FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))
 
     # ERABILTZAILEAK
