@@ -100,18 +100,23 @@ class LibraryController:
 
     # ERRESEINAK
 
-    def getErreseina(self, erabiltzaileID, liburuID):
-        erreseinak = db.select("SELECT * from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",
-                               (erabiltzaileID, liburuID))
+    def getErreseina(self, erabiltzaileizena, liburuID):
+        erreseinak = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
+                               (erabiltzaileizena, liburuID))
         if len(erreseinak) == 0:
             return None
         e = erreseinak[0]
-        return Erreseina(e[0], e[2], e[3], e[4])
+        return Erreseina(e[0], e[2], e[3], e[4], e[1])
 
     def getErreseinak(self, liburuID):
         erreseinak = db.select("SELECT * FROM Erreseina WHERE liburuID = ?",
                                (liburuID,))
-        return [Erreseina(e[0], e[2], e[3], e[4]) for e in erreseinak]
+        return [Erreseina(e[0], e[2], e[3], e[4], e[1]) for e in erreseinak]
+
+    def getErreseinakErabiltzaileko(self, erabiltzaileizena):
+        erreseinak = db.select("SELECT * FROM Erreseina WHERE erabiltzaileizena = ?",
+                               (erabiltzaileizena,))
+        return [Erreseina(e[0], e[2], e[3], e[4], e[1]) for e in erreseinak]
 
     def erreseinaEguneratu(self, erabiltzaileID, liburuID, puntuazioa, testua):
         em = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
