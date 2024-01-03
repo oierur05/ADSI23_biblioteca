@@ -90,7 +90,31 @@ class LibraryController:
     # LAGUNAK
 
     def setLagunEskaera(self, igorleID, jasotzaileID):
-        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
+        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2,onartua) VALUES (?,?,?)", (igorleID, jasotzaileID, 'ez'))
+
+    def getLagunEskaerak(self, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE erabiltzaile2 = ? AND onartua = 'ez'",
+                         (jasotzaileID,))
+        if len(laguna) == 0:
+            return None
+
+        return [self.erabiltzaileBilatu(lag[0]) for lag in laguna]
+
+    def getLagunak(self, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE erabiltzaile2 = ? AND onartua = 'bai'",
+                         (jasotzaileID,))
+        if len(laguna) == 0:
+            return None
+
+        return [self.erabiltzaileBilatu(lag[0]) for lag in laguna]
+
+    def getLagunakDira(self, igorleID, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+                           (jasotzaileID, igorleID, igorleID, jasotzaileID))
+        if len(laguna) == 0:
+            return False
+        else:
+            return True
 
     # ERRESERBAK
 
@@ -100,18 +124,23 @@ class LibraryController:
 
     # ERRESEINAK
 
-    def getErreseina(self, erabiltzaileID, liburuID):
-        erreseinak = db.select("SELECT * from Erreseina WHERE erabiltzaileID = ? AND liburuID = ?",
-                               (erabiltzaileID, liburuID))
+    def getErreseina(self, erabiltzaileizena, liburuID):
+        erreseinak = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
+                               (erabiltzaileizena, liburuID))
         if len(erreseinak) == 0:
             return None
         e = erreseinak[0]
-        return Erreseina(e[0], e[2], e[3], e[4])
+        return Erreseina(e[0], e[2], e[3], e[4], e[1])
 
     def getErreseinak(self, liburuID):
         erreseinak = db.select("SELECT * FROM Erreseina WHERE liburuID = ?",
                                (liburuID,))
-        return [Erreseina(e[0], e[2], e[3], e[4]) for e in erreseinak]
+        return [Erreseina(e[0], e[2], e[3], e[4], e[1]) for e in erreseinak]
+
+    def getErreseinakErabiltzaileko(self, erabiltzaileizena):
+        erreseinak = db.select("SELECT * FROM Erreseina WHERE erabiltzaileizena = ?",
+                               (erabiltzaileizena,))
+        return [Erreseina(e[0], e[2], e[3], e[4], e[1]) for e in erreseinak]
 
     def erreseinaEguneratu(self, erabiltzaileID, liburuID, puntuazioa, testua):
         em = db.select("SELECT * from Erreseina WHERE erabiltzaileizena = ? AND liburuID = ?",
@@ -162,7 +191,7 @@ class LibraryController:
     # ERABILTZAILEAK
 
     def erabiltzaileBilatu(self, eIzena):
-        erabiltzaileak = db.select("SELECT * from User WHERE izena = ?", eIzena)
+        erabiltzaileak = db.select("SELECT * from Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))
         if len(erabiltzaileak) == 0:
             return None
 

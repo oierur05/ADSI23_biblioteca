@@ -48,8 +48,8 @@ class User:
 
 	def eskaeraKudeatu(self, onartuDa, erabiltzaileID):
 		if onartuDa:
-			db.update("UPDATE Laguna SET onartua = true WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+			db.update("UPDATE Laguna SET onartua = 'bai' WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
 					  (self.username,erabiltzaileID,erabiltzaileID,self.username))
 		else:
-			db.delete("DELETE FROM Laguna WHERE onartua = false AND (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+			db.delete("DELETE FROM Laguna WHERE onartua = 'ez' AND (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
 					  (self.username,erabiltzaileID,erabiltzaileID,self.username))

@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Gureak
+*.db
+.idea/misc.xml
+
 # C extensions
 *.so
 

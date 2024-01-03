@@ -1,13 +1,27 @@
+from bs4 import BeautifulSoup
+
 from . import BaseTestClass
 
 class TestForoa(BaseTestClass):
 
     def test_gaiak_kontsultatu(self):
-    # testak: okerra:
-    #           ez dira sisteman dauden gai guztiak agertzen
-    #         zuzena:
-    #           sisteman dauden gai guztiak agertzen dira
-		self.assertTrue(False)
+        # sisteman dauden gai guztiak agertzen dira
+        self.sartu('3ne', '3ne')
+        res = self.client.get('/foroak')
+        self.assertEqual(200, res.status_code)
+        page = BeautifulSoup(res.data, features="html.parser")
+        self.assertEqual(3, len(page.find_all('div', class_='card-body')))
+        self.irten()
+
+        # gai zehatz bati buruzko foroak agertzen dira
+        params = {
+            'abentura'
+        }
+        self.sartu('3ne', '3ne')
+        res = self.client.get('/foroak', query_string=params)
+        self.assertEqual(302, res.status_code)
+        self.assertEqual(1, len(page.find_all('div', class_='card-body')))
+        self.irten()
 
     def test_gaiaren_mezuak_ikusi(self):
     # testak: okerra:

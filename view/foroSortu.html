@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+    <center>
+        <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+
+            <form class="form-inline">
+                <input type="text" class="form-control mb-2" id="izena" name="izena" placeholder="liburuaren izena" value=""> <br>
+                <input type="text" class="form-control mb-2" id="argazkia" name="argazkia" placeholder="argazkia" value=""> <br>
+                <input type="text" class="form-control mb-2" id="idazlea" name="idazlea" placeholder="idazlea" value=""> <br>
+                <input type="number" class="form-control mb-2" id="urtea" name="urtea" placeholder="urtea" value=""> <br>
+                <input type="text" class="form-control mb-2" id="sinopsia" name="sinopsia" placeholder="sinopsia" value=""> <br>
+                <input type="text" class="form-control mb-2" id="pdf" name="pdf" placeholder="pdf" value=""> <br>
+
+                <button type="submit" class="btn btn-primary">
+                    Eginda
+                </button> <br>
+            </form>
+
+            <form class="form-inline">
+                <input type="hidden" class="form-control mb-2" id="atzera" name="atzera" placeholder="atzera" value="atzera">
+                <br> <button type="submit" class="btn btn-primary">
+                    Atzera
+                </button>
+            </form>
+
+        </div>
+    </center>
+    </div>
+
+</div>
+
+{% endblock %}

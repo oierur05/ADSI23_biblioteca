@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <form class="form-inline">
+      <div class="input-group mb-2 mr-sm-2">
+        <label for="lagunIzena" class="col-sm-2 col-form-label">LAGUNAREN IZENA</label>
+        <input type="text" class="form-control mb-2" id="lagunIzena" name="lagunIzena" placeholder="lagunIzena" {% if lagunIzena != "": %}value="{{lagunIzena}}"{% endif %}>
+      </div>
+      <button type="submit" class="btn btn-primary">
+          <i class="fa fa-search"></i>
+          Search
+      </button>
+    </form>
+
+    {% if User %}
+        <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+            <div class="card d-flex flex-row">
+                <div class="card-body">
+                    <center>
+                    {% if User.argazkia: %}
+                        <img src="{{User.argazkia}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                    {% endif %}
+                    <h5 class="card-title">{{User.username}}</h5>
+                    <form class="form-inline">
+                        <input type="hidden" class="form-control mb-2" id="eskBidali" name="eskBidali" placeholder="eskBidali" value="{{User.username}}">
+                        <button type="submit" class="btn btn-primary">
+                            Eskaera bidali
+                        </button>
+                    </form>
+                    </center>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <h4>Lagun eskaerak</h4>
+        {% if Eskaerak %}
+        {% for esk in Eskaerak %}
+            <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                <div class="card d-flex flex-row">
+                    <div class="card-body">
+                        <center>
+                        {% if esk.argazkia: %}
+                            <img src="{{esk.argazkia}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                        {% endif %}
+                        <h5 class="card-title">{{esk.username}}</h5>
+                        <form class="form-inline">
+                            <input type="hidden" class="form-control mb-2" id="onartu" name="onartu" placeholder="onartu" value="{{esk.username}}">
+                            <button type="submit" class="btn btn-primary">
+                                Onartu
+                            </button>
+                        </form>
+                        <form class="form-inline">
+                            <input type="hidden" class="form-control mb-2" id="ezeztatu" name="ezeztatu" placeholder="ezeztatu" value="{{esk.username}}">
+                            <button type="submit" class="btn btn-primary">
+                                Ezeztatu
+                            </button>
+                        </form>
+                        </center>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+
+        <hr>
+        <h4>Lagunak</h4>
+        {% if Lagunak %}
+        {% for lag in Lagunak %}
+            <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                <div class="card d-flex flex-row">
+                    <div class="card-body">
+                        <center>
+                        {% if lag.argazkia: %}
+                            <img src="{{lag.argazkia}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                        {% endif %}
+                        <h5 class="card-title">{{lag.username}}</h5>
+                        <form class="form-inline">
+                            <input type="hidden" class="form-control mb-2" id="bisitatu" name="bisitatu" placeholder="bisitatu" value="{{lag.username}}">
+                            <button type="submit" class="btn btn-primary">
+                                Bisitatu perfila
+                            </button>
+                        </form>
+                        </center>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
