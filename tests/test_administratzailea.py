@@ -13,14 +13,14 @@ class TestAdministratzailea(BaseTestClass):
         #           1. erabiltzailea administratzailea da
         #           2. erabiltzailea ez da administratzailea
         # [1]
-        self.sartu('juanbelio', 'juan')
+        self.sartu('juanbelio', 'juanbelio')
         res = self.client.get('/perfila')
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
         self.assertEqual(2, len(page.find_all('div', class_='card-body')))
         self.irten()
         # [2]
-        self.sartu('numen_0', 'calvo')
+        self.sartu('irune', 'irune')
         res = self.client.get('/perfila')
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
@@ -41,7 +41,7 @@ class TestAdministratzailea(BaseTestClass):
             'admin': False
         }
         self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])
-        self.sartu('juanbelio', 'juan')
+        self.sartu('juanbelio', 'juanbelio')
         res = self.client.get('/erabSortu', query_string=params)
         self.assertEqual(302, res.status_code)
         self.assertEqual(1, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])
@@ -60,10 +60,13 @@ class TestAdministratzailea(BaseTestClass):
         #         zuzena:
         #           erabiltzailea ezabatu da
         params = {
-            'erabIzena': "3ne"
+            'erabIzena': "iker"
         }
-        self.assertEqual(1, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("3ne",))[0][0])
-        self.sartu('juanbelio', 'juan')
+
+        db.insert("INSERT INTO ERABILTZAILEA(izenabizenak, erabiltzaileizena, pasahitza) VALUES(?,?,?)", ("Iker", "iker", "iker"))
+
+        self.assertEqual(1, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])
+        self.sartu('juanbelio', 'juanbelio')
         res = self.client.get('/erabEzabatu', query_string=params)
         self.assertEqual(302, res.status_code)
-        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("3ne",))[0][0])
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])

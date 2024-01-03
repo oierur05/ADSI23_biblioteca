@@ -13,25 +13,25 @@ class TestErreserba(BaseTestClass):
 		# 			1. historiala hutsik dauka
 		#			2. historiala dauka
 		# [1]
-		self.sartu('numen_0', 'calvo')
-		res = self.client.get('/erreserbak')
-		self.assertEqual(200, res.status_code)
-		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(2, len(page.find('div', class_='row').find_all('div', class_='card')))
-		self.irten()
-		# [2]
-		self.sartu('juanbelio', 'juan')
+		self.sartu('irune', 'irune')
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
 		self.irten()
+		# [2]
+		self.sartu('juanbelio', 'juanbelio')
+		res = self.client.get('/erreserbak')
+		self.assertEqual(200, res.status_code)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(2, len(page.find('div', class_='row').find_all('div', class_='card')))
+		self.irten()
 
 	def test_liburua_erreserbatu(self):
 		# testak:
 		# 			1. liburua erreserbatu
-		erabiltzaileID = 'numen_0'
-		self.sartu(erabiltzaileID, 'calvo')
+		erabiltzaileID = 'inigoduenas'
+		self.sartu(erabiltzaileID, 'inigoduenas')
 		# [1]
 		params = {
 			'titulua': "Ligeros libertinajes sabaticos"
@@ -72,7 +72,7 @@ class TestErreserba(BaseTestClass):
 		#         zuzena:
 		# 			3. liburua existitzen da eta erreserbatuta dago
 		erabiltzaileID = 'juanbelio'
-		self.sartu(erabiltzaileID, 'juan')
+		self.sartu(erabiltzaileID, 'juanbelio')
 		params = {
 			'titulua': "Ligeros libertinajes sabaticos"
 		}
