@@ -136,9 +136,10 @@ def liburua():
 			return redirect('/erreserbak')
 
 		like = request.values.get("like", "")
+		erabID = request.values.get("erabID", "")
 
-		if like:
-			erreseinaLikeGehitu(user.username, like)
+		if like and erabID:
+			erreseinaLikeGehitu(erabID, like)
 			Liburua = liburuaIkusi(like)
 			erreseinak = erreseinakIkusi(like)
 			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
@@ -157,6 +158,31 @@ def liburua():
 			Liburua = liburuaIkusi(liburuid)
 			erreseinak = erreseinakIkusi(liburuid)
 			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
+
+		bisitatu = request.values.get("bisitatu", "")
+
+		if bisitatu:
+			laguna = erabiltzaileaBilatu(bisitatu)
+			lagunarenLagunak = lagunakLortu(bisitatu)
+			Erreserbak = erreserbakIkusi(bisitatu)
+			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+			class Mezcla:
+				def __init__(self, lib, erre):
+					self.lib = lib
+					self.erre = erre
+
+			Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+			Erreseinak = erreseinakIkusiErabiltzaileko(bisitatu)
+			ErreseinaLiburua = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			InfoErreseinak = [Mezcla(ErreseinaLiburua[e], Erreseinak[e]) for e in range(len(Erreseinak))]
+
+			irakurritakoLiburuak = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			return render_template('perfilabisitatu.html', user=laguna, Lagunak=lagunarenLagunak, Info=Info,
+								   Liburua=irakurritakoLiburuak, Erreseinak=InfoErreseinak)
 
 		return redirect("/catalogue")
 
@@ -218,14 +244,83 @@ def irakurritakoak():
 			resp = redirect('/login')
 	return resp
 
+@app.route('/foroa')
+def foroa():
+
+	user = getActualUser()
+
+	if user:
+		foroID = request.values.get("foroID", "")
+		mezua = request.values.get("mezua", "")
+		if foroID and mezua:
+			komentatuForoan(foroID, mezua, user.username)
+			Foroa = ikusiForoa(foroID)
+			Mezuak = ikusiForoarenMezuak(foroID)
+			return render_template('foroa.html', Foroa=Foroa, Mezuak=Mezuak)
+
+		bisitatu = request.values.get("bisitatu", "")
+
+		if bisitatu:
+			laguna = erabiltzaileaBilatu(bisitatu)
+			lagunarenLagunak = lagunakLortu(bisitatu)
+			Erreserbak = erreserbakIkusi(bisitatu)
+			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+			class Mezcla:
+				def __init__(self, lib, erre):
+					self.lib = lib
+					self.erre = erre
+
+			Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+			Erreseinak = erreseinakIkusiErabiltzaileko(bisitatu)
+			ErreseinaLiburua = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			InfoErreseinak = [Mezcla(ErreseinaLiburua[e], Erreseinak[e]) for e in range(len(Erreseinak))]
+
+			irakurritakoLiburuak = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+			return render_template('perfilabisitatu.html', user=laguna, Lagunak=lagunarenLagunak, Info=Info,
+								   Liburua=irakurritakoLiburuak, Erreseinak=InfoErreseinak)
+
+		return redirect('/foroak')
+	else:
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = redirect('/login')
+	return resp
+
 @app.route('/foroak')
 def foroak():
-	izenburua = request.values.get("izenburua", "")
-	page = int(request.values.get("page", 1))
-	Foroa, nb_books = foroKatalogoanForoBilatu(izenburua)
-	total_pages = (nb_books // 6) + 1
-	return render_template('foroak.html', Foroa=Foroa, izenburua=izenburua, current_page=page,
-	                       total_pages=total_pages, max=max, min=min)
+
+	foroSortu = request.values.get("foroSortu", "")
+	foroDeskr = request.values.get("foroDeskr", "")
+	foroID = request.values.get("foroID", "")
+
+	if foroSortu and foroDeskr:
+		user = getActualUser()
+		if user:
+			foroaBerriaSortu(foroSortu, user.username, foroDeskr)
+			return redirect('/foroak')
+
+		else:
+			if request.method == 'POST':
+				return redirect('/login')
+			else:
+				resp = redirect('/login')
+		return resp
+	elif foroID:
+		Foroa = ikusiForoa(foroID)
+		Mezuak = ikusiForoarenMezuak(foroID)
+		return render_template('foroa.html', Foroa=Foroa, Mezuak=Mezuak)
+	else:
+		izenburua = request.values.get("izenburua", "")
+		page = int(request.values.get("page", 1))
+		Foroa, nb_books = foroKatalogoanForoBilatu(izenburua)
+		total_pages = (nb_books // 6) + 1
+		return render_template('foroak.html', Foroa=Foroa, izenburua=izenburua, current_page=page,
+							   total_pages=total_pages, max=max, min=min)
 
 @app.route('/libSortu')
 def libSortu():
@@ -418,7 +513,13 @@ def ikusiForoa(foroID):
 	foroa = LibraryController().getForoa(foroID)
 	if foroa is None:
 		return
-	foroa.getMezuak()
+	return foroa
+
+def ikusiForoarenMezuak(foroID):
+	foroa = LibraryController().getForoa(foroID)
+	if foroa is None:
+		return
+	return foroa.getMezuak()
 
 # LAGUNAK
 
@@ -481,6 +582,32 @@ def erabiltzaileaEzabatu(eIzena):
 
 def erabiltzaileaBilatu(eIzena):
 	return LibraryController().erabiltzaileBilatu(eIzena)
+
+def bisitatuPerfila():
+	bisitatu = request.values.get("bisitatu", "")
+
+	if bisitatu:
+		laguna = erabiltzaileaBilatu(bisitatu)
+		lagunarenLagunak = lagunakLortu(bisitatu)
+		Erreserbak = erreserbakIkusi(bisitatu)
+		Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
+
+		class Mezcla:
+			def __init__(self, lib, erre):
+				self.lib = lib
+				self.erre = erre
+
+		Info = [Mezcla(Liburua[e], Erreserbak[e]) for e in range(len(Erreserbak))]
+
+		Erreseinak = erreseinakIkusiErabiltzaileko(bisitatu)
+		ErreseinaLiburua = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+		InfoErreseinak = [Mezcla(ErreseinaLiburua[e], Erreseinak[e]) for e in range(len(Erreseinak))]
+
+		irakurritakoLiburuak = [liburuaIkusi(e.libID) for e in Erreseinak]
+
+		return render_template('perfilabisitatu.html', user=laguna, Lagunak=lagunarenLagunak, Info=Info,
+							   Liburua=irakurritakoLiburuak, Erreseinak=InfoErreseinak)
 
 # LIBURUAK
 
