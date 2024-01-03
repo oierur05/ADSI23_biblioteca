@@ -145,10 +145,10 @@ def liburua():
 			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
 
 		erreseinaegin = request.values.get("erreseinaegin", "")
+		testua = request.values.get("testua", "")
+		balorazioa = request.values.get("balorazioa", "")
 
-		if erreseinaegin:
-			testua = request.values.get("testua", "")
-			balorazioa = request.values.get("balorazioa", "")
+		if erreseinaegin and testua and balorazioa:
 			if int(balorazioa) > 10:
 				balorazioa = "10"
 			elif int(balorazioa) < 0:
