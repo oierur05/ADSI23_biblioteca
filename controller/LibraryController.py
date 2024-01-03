@@ -90,7 +90,31 @@ class LibraryController:
     # LAGUNAK
 
     def setLagunEskaera(self, igorleID, jasotzaileID):
-        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2) VALUES (?,?,?)", (igorleID, jasotzaileID))
+        db.insert("INSERT INTO Laguna(erabiltzaile1,erabiltzaile2,onartua) VALUES (?,?,?)", (igorleID, jasotzaileID, 'ez'))
+
+    def getLagunEskaerak(self, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE erabiltzaile2 = ? AND onartua = 'ez'",
+                         (jasotzaileID,))
+        if len(laguna) == 0:
+            return None
+
+        return [self.erabiltzaileBilatu(lag[0]) for lag in laguna]
+
+    def getLagunak(self, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE erabiltzaile2 = ? AND onartua = 'bai'",
+                         (jasotzaileID,))
+        if len(laguna) == 0:
+            return None
+
+        return [self.erabiltzaileBilatu(lag[0]) for lag in laguna]
+
+    def getLagunakDira(self, igorleID, jasotzaileID):
+        laguna = db.select("SELECT * from Laguna WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?) OR (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
+                           (jasotzaileID, igorleID, igorleID, jasotzaileID))
+        if len(laguna) == 0:
+            return False
+        else:
+            return True
 
     # ERRESERBAK
 
@@ -167,7 +191,7 @@ class LibraryController:
     # ERABILTZAILEAK
 
     def erabiltzaileBilatu(self, eIzena):
-        erabiltzaileak = db.select("SELECT * from User WHERE izena = ?", eIzena)
+        erabiltzaileak = db.select("SELECT * from Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))
         if len(erabiltzaileak) == 0:
             return None
 

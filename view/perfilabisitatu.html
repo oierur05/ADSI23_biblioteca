@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <hr class="hr" />
+
+    <div class="row">
+    <center>
+        <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+            <div class="card d-flex flex-row">
+                <div class="card-body">
+                    {% if user.argazkia: %}
+                        <img src="{{user.argazkia}}" class="rounded" style="max-width: 20rem; height: fit-content;">
+                    {% endif %}
+                    <h5 class="card-title">{{user.username}}</h5><br>
+
+                    <hr>
+
+                    <h3>Lagunak</h3><br>
+
+                    {% if Lagunak %}
+                    {% for lag in Lagunak %}
+                        <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                            <div class="card d-flex flex-row">
+                                <div class="card-body">
+                                    <center>
+                                    {% if lag.argazkia: %}
+                                        <img src="{{lag.argazkia}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                                    {% endif %}
+                                    <h5 class="card-title">{{lag.username}}</h5>
+                                    </center>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <hr>
+
+                    <h3>Erreserbak</h3><br>
+
+                    {% for subinfo in Info %}
+                    <div>
+                        <div class="card d-flex flex-row">
+                            <div class="card-body">
+                                <center>
+                                {% if subinfo.lib.portada: %}
+                                    <img src="{{subinfo.lib.portada}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                                {% endif %}
+                                <h5 class="card-title">{{subinfo.lib.izenburua}}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{subinfo.lib.idazlea}}</h6>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <h3>Irakurritako liburuak</h3><br>
+
+                    {% for lib in Liburua %}
+                    <div>
+                        <div class="card d-flex flex-row">
+                            <div class="card-body">
+                                <center>
+                                {% if lib.portada: %}
+                                    <img src="{{lib.portada}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                                {% endif %}
+                                <h5 class="card-title">{{lib.izenburua}}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{lib.idazlea}}</h6>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <h3>Erreseinak: </h3><br>
+
+                    {% for erreseina in Erreseinak %}
+                        {% if erreseina.erre.puntuazioa != "egin gabe": %}
+                            <br>
+                            <div class="card d-flex flex-row">
+                                <div class="card-body">
+                                    <center>
+                                    {% if erreseina.lib.portada: %}
+                                        <img src="{{erreseina.lib.portada}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                                    {% endif %}
+                                    <h5 class="card-title">{{erreseina.lib.izenburua}}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{erreseina.lib.idazlea}}</h6>
+                                    <hr>
+                                    <h5 class="card-title">Puntuazioa: {{erreseina.erre.puntuazioa}}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.erre.testua}}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.erre.likeKopurua}}</h6>
+                                    </center>
+                                    <br>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </center>
+    </div>
+</div>
+
+{% endblock %}
