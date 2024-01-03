@@ -13,14 +13,14 @@ class TestErreserba(BaseTestClass):
 		# 			1. historiala hutsik dauka
 		#			2. historiala dauka
 		# [1]
-		self.sartu('numen_0', 'calvo')
+		self.sartu('inigoduenas', 'inigoduenas')
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(2, len(page.find('div', class_='row').find_all('div', class_='card')))
 		self.irten()
 		# [2]
-		self.sartu('juanbelio', 'juan')
+		self.sartu('inigoduenas', 'inigoduenas')
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
@@ -85,7 +85,7 @@ class TestErreserba(BaseTestClass):
 		}
 		#res = self.client.get('/erreserbak', query_string=params) # TODO: aqui hay un bug en el programa (webServer)
 		res = self.client.get('/erreserbak')
-		self.assertEqual(200, res.status_code)
+		self.assertEqual(302, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
 						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
