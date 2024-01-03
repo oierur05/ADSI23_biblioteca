@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+
 from . import BaseTestClass
 
 class TestForoa(BaseTestClass):
