@@ -56,12 +56,18 @@
                     <h5 class="card-title">Erabiltzailea: {{erreseina.erabiltzaileIzena}} | Puntuazioa: {{erreseina.puntuazioa}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Erreseina: {{erreseina.testua}}</h6>
                     <h6 class="card-subtitle mb-2 text-muted">Like kopurua: {{erreseina.likeKopurua}}</h6>
-                    <form class="form-inline" action="/liburua">
+                    <form action="/liburua">
+                        <input type="hidden" class="form-control mb-2" id="erabID" name="erabID" placeholder="erabID" value="{{erreseina.erabiltzaileIzena}}">
                         <input type="hidden" class="form-control mb-2" id="like" name="like" placeholder="like" value="{{Liburua.id}}">
                         <button type="submit" class="btn btn-primary">
                             LIKE
                         </button>
-
+                    </form>
+                    <form action="/liburua">
+                        <input type="hidden" class="form-control mb-2" id="bisitatu" name="bisitatu" placeholder="bisitatu" value="{{erreseina.erabiltzaileIzena}}">
+                        <button type="submit" class="btn btn-primary">
+                            Bisitatu perfila
+                        </button>
                     </form>
                     <br>
                 </div>
