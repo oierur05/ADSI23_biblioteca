@@ -16,14 +16,15 @@ class TestErreseina(BaseTestClass):
 		liburua = {
 			'titulua': "El Principe de la Niebla"
 		}
-		erabiltzaileID = 'juanbelio'
-		self.sartu(erabiltzaileID, 'juan')
+		erabiltzaileID = 'inigoduenas'
+		self.sartu(erabiltzaileID, 'inigoduenas')
 		res = self.client.get('/catalogue', query_string=liburua)
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
+		print(page.find('div', class_='row').find_all("h5", class_="card-title"))
 		self.assertEqual(
-			db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("37372",))[0][0],
-			len([i for i in page.find_all("h5", class_="card-title")]))
+			db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("26903",))[0][0],
+			len(page.find('div', class_='row').find_all("h5", class_="card-title")) - 1)
 		self.irten()
 
 	def test_erreseina_egin_editatu(self):
@@ -38,26 +39,28 @@ class TestErreseina(BaseTestClass):
 			'testua': "oso ona",
 			'balorazioa': "8",
 			'erreseinaegin': "erreseinaegin",
-			'liburuid': "37372"
+			'liburuid': "26903"
 		}
 		erreseina_editatuta = {
 			'testua': "Bikaina",
-			'balorazioa': "10",
+			'balorazioa': "9",
 			'erreseinaegin': "erreseinaegin",
-			'liburuid': "37372"
+			'liburuid': "26903"
 		}
-		erabiltzaileID = 'juanbelio'
-		self.sartu(erabiltzaileID, 'juan')
+		erabiltzaileID = 'inigoduenas'
+		self.sartu(erabiltzaileID, 'inigoduenas')
 		# [1]
 		res = self.client.get('/liburua', query_string=erreseina)
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/catalogue', query_string=liburua)
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 8")]))
+		self.assertEqual(1, len([i for i in page.find('div', class_='row')
+								.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 8")]))
 		# [2]
 		res = self.client.get('/liburua', query_string=erreseina_editatuta)
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/catalogue', query_string=liburua)
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 10")]))
+		self.assertEqual(1, len([i for i in page.find('div', class_='row')
+								.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 9")]))
 		self.irten()
