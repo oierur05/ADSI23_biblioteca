@@ -2,8 +2,9 @@ from bs4 import BeautifulSoup
 
 from . import BaseTestClass
 
-from controller.LibraryController import LibraryController
-library = LibraryController()
+from model.Connection import Connection
+
+db = Connection()
 
 class TestErreserba(BaseTestClass):
 
@@ -27,29 +28,82 @@ class TestErreserba(BaseTestClass):
 		self.irten()
 
 	def test_liburua_erreserbatu(self):
-		# testak: okerra:
-		# 			1. liburua erreserbatuta dago
-		#         zuzena:
-		# 			2. liburua ez dago erreserbatuta
-		self.sartu('numen_0', 'calvo')
-		# [2]
+		# testak:
+		# 			1. liburua erreserbatu
+		erabiltzaileID = 'numen_0'
+		self.sartu(erabiltzaileID, 'calvo')
+		# [1]
 		params = {
 			'titulua': "Ligeros libertinajes sabaticos"
 		}
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
 		res = self.client.get('/catalogue', query_string = params)
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/liburua', query_string = params)
-		print(res.headers)
+		res = self.client.get('/erreserbak')
 		page = BeautifulSoup(res.data, features="html.parser")
-		#self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
-		# [1]
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
+		# liburu bat kendu
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		lid = page.find('h5', class_='card-title')
+		params = {
+			'id': str(lid.text.split()[-1])
+		}
+		res = self.client.get('/erreserbak', query_string = params)
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
 		self.irten()
-		self.assertTrue(False)
 
 	def test_liburua_bueltatu(self):
 		# testak: okerra:
-		# 			liburua ez dago erreserbatuta
-		# 			liburua ez da existitzen
+		# 			1. liburua ez dago erreserbatuta
+		# 			2. liburua ez da existitzen
 		#         zuzena:
-		# 			liburua existitzen da eta erreserbatuta dago
+		# 			3. liburua existitzen da eta erreserbatuta dago
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juan')
+		res = self.client.get('/erreserbak', query_string={'id' : "-1"})
+		self.assertEqual(200, res.status_code)
 		self.assertTrue(False)
+		self.irten()
+
+"""
+
+		erabiltzaileID = 'numen_0'
+		self.sartu(erabiltzaileID, 'calvo')
+		# [1]
+		params = {
+			'titulua': "Ligeros libertinajes sabaticos"
+		}
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
+		res = self.client.get('/liburua', query_string = params)
+		self.assertEqual(302, res.status_code)
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
+		# [1]
+		res = self.client.get('/erreserbak')
+		page = BeautifulSoup(res.data, features="html.parser")
+		lid = page.find('h5', class_='card-title')
+		params = {
+			'id': str(lid.text.split()[-1])
+		}
+		print(params)
+		res = self.client.get('/erreserbak', query_string = params)
+		page = BeautifulSoup(res.data, features="html.parser")
+		print(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+			  len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
+		# [1]
+		self.irten()
+		"""
