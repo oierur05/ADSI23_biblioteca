@@ -1,44 +1,63 @@
 from bs4 import BeautifulSoup
 
+from controller.LibraryController import LibraryController
 from . import BaseTestClass
 
 from model.Connection import Connection
 
 db = Connection()
-
+library = LibraryController()
 class TestErreseina(BaseTestClass):
-	
+
 	def test_erreseinak_kontsultatu(self):
-		# TODO
-		# testak: okerra:
-		# 			ez dira liburuaren erreseina guztiak agertzen
-		#		  zuzena:
-		#			liburuaren erreseina guztiak agertzen dira
-		self.assertTrue(False)
+		# testak:
+		# 			1. ez dira liburuaren erreseina guztiak agertzen
+		# [1]
+		liburua = {
+			'titulua': "El Principe de la Niebla"
+		}
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juan')
+		res = self.client.get('/catalogue', query_string=liburua)
+		self.assertEqual(200, res.status_code)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(
+			db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("37372",))[0][0],
+			len([i for i in page.find_all("h5", class_="card-title")]))
+		self.irten()
 
 	def test_erreseina_egin_editatu(self):
-		# TODO
 		# testak: okerra:
 		# 			1. liburua erreseina egin
 		# 			2. liburua erreseina aldatu
 		# http://127.0.0.1:5000/liburua?testua=1&balorazioa=2&erreseinaegin=erreseinaegin&liburuid=1
-
-		# [1]
-		erabiltzaileID = 'juanbelio'
-		self.sartu(erabiltzaileID, 'juan')
-		res = self.client.get('/erreserbak')
-		page = BeautifulSoup(res.data, features="html.parser")
-		lid = page.find('h5', class_='card-title')
-		print(lid)
-		params = {
+		liburua = {
+			'titulua': "El Principe de la Niebla"
+		}
+		erreseina = {
 			'testua': "oso ona",
 			'balorazioa': "8",
-			'erreseinaegin': 'erreseinaegin',
-			'liburuid': str(db.select("SELECT liburuid FROM Kopiafisikoa WHERE kopiaid = ?", (str(lid.text.split()[-1]),))[0][0])
+			'erreseinaegin': "erreseinaegin",
+			'liburuid': "37372"
 		}
-		res = self.client.get('/erreserbak', query_string=params)
+		erreseina_editatuta = {
+			'testua': "Bikaina",
+			'balorazioa': "10",
+			'erreseinaegin': "erreseinaegin",
+			'liburuid': "37372"
+		}
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juan')
+		# [1]
+		res = self.client.get('/liburua', query_string=erreseina)
 		self.assertEqual(200, res.status_code)
-		res = self.client.get('/erreserbak')
+		res = self.client.get('/catalogue', query_string=liburua)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 8")]))
+		# [2]
+		res = self.client.get('/liburua', query_string=erreseina_editatuta)
 		self.assertEqual(200, res.status_code)
-		print(params)
+		res = self.client.get('/catalogue', query_string=liburua)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 10")]))
 		self.irten()
