@@ -1,0 +1,12 @@
+title Lagun Eskaera Bidali
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Erabiltzaileak "eskaera bidali"\nbotoiari klik egiten du
+WebServer->LibraryController: setLagunEskaera(igorleID, jasotzaileID)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "INSERT INTO Laguna(erabiltzaile1,erabiltzaile2,onartua) \nVALUES (igorleID,jasotzaileID,'ez')"

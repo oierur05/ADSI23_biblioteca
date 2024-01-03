@@ -1,0 +1,21 @@
+title KomentatuForoan
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+participant Foroa
+database DatuBasea
+Aktorea->WebServer: Erabiltzaileak "mezua jarri" \nbotoian klik egiten du
+WebServer->LibraryController: getForoa(foroID)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT * from Foroa \nWHERE id = foroID"
+LibraryController<--DatuBasea: JSON1
+alt FORO EXISTITZEN BADA
+note over LibraryController: {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n
+WebServer<--LibraryController: JSON1
+note over WebServer: {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n
+WebServer->Foroa: gehituMezua(eIzena, testua)
+Foroa->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "INSERT INTO Mezua VALUES \n(eIzena, self.foroID, now, testua)"
+end

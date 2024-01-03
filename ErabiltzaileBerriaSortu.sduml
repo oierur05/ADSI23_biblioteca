@@ -1,0 +1,16 @@
+title Erabiltzaile Berria Sortu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Administratzaileak "erabiltzailea sortu" \nbotoian klik egiten du
+WebServer->LibraryController: erabiltzaileBerriaSortu(eIzena, izenAbizenak, pasahitza, \nnan, tel, pElek, helb, argazkia, administratzaileaDa)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT count(erabiltzaileizena) FROM Erabiltzailea \nWHERE erabiltzaileizena = eIzena"
+alt ERABILTZAILEA EZ BADAGO SARTUTA
+LibraryController->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "INSERT INTO Erabiltzailea VALUES \n(eIzena,izenAbizenak,pasahitza,nan,tel,pElek,helb,argazkia,administratzaileaDa)"
+end

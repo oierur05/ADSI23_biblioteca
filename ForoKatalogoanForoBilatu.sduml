@@ -1,0 +1,16 @@
+title Foro Katalogoan Foro Bilatu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Erabiltzaileak "hitzgako" \nzatia betetzen du
+WebServer->LibraryController: getForoak(hitzGako)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT * from Foroa WHERE id LIKE hitzGako \nOR erabiltzaileIzena LIKE hitzGako \nOR izena LIKE hitzGako \nOR deskribapena LIKE hitzGako \nOR sorreraData LIKE hitzGako"
+LibraryController<--DatuBasea: JSON1
+note over LibraryController: [\n {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n ]
+WebServer<--LibraryController: JSON2
+note over WebServer: [\n {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n ]

@@ -1,0 +1,20 @@
+title Ikusi Foroa
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Erabiltzaileak foro batean \n"ireki" klikatzen du
+WebServer->LibraryController: getForoa(foroID)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT * from Foroa \nWHERE id = foroID"
+LibraryController<--DatuBasea: JSON1
+alt FOROA EXISTITZEN BADA
+note over LibraryController: {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n
+WebServer<--LibraryController: JSON1
+note over WebServer: {\n foroID:int\n erabiltzaileIzena:String\n izena:String\n deskribapena:String\n sorreraData:Date\n  }\n
+end
+
+
