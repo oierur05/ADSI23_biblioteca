@@ -1,0 +1,16 @@
+title Erabiltzaile Ezabatu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Administratzaileak "erabiltzailea ezabatu" \nbotoian klik egiten du
+WebServer->LibraryController: erabiltzaileaEzabatu(eIzena)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT count(erabiltzaileizena) FROM \nErabiltzailea WHERE erabiltzaileizena = eIzena"
+alt ERABILTZAILEA EXISTITUZ GERO
+LibraryController->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "DELETE FROM Erabiltzailea \nWHERE erabiltzaileizena = eIzena"
+end

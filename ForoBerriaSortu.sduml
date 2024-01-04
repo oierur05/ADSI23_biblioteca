@@ -1,0 +1,12 @@
+title Foro Berria Sortu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Erabiltzaileak izena eta deskribapena \njarri ostean "sortu" botoia sakatu
+WebServer->LibraryController: foroaSortu(fIzena, eIzena, deskribapena)
+LibraryController->DatuBasea: exeqSQLQ(k1)
+note over DatuBasea: k1: "INSERT INTO Foroa VALUES\n(self.idBerria(db.select("SELECT id FROM Foroa")),\neIzena,fIzena,deskribapena,datetime.datetime.now().date())"

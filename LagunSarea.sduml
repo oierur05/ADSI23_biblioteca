@@ -1,0 +1,22 @@
+title Lagun Eskaera Kudeatu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+participant Erabiltzailea
+database DatuBasea
+
+Aktorea->WebServer: Erabiltzaileak lagun eskaera onartzeko/ezeztatzeko esaten du
+WebServer->LibraryController: erabiltzaileBilatu(eIzena)
+WebServer<--LibraryController: Erabiltzailea
+alt ERABILTZAILEA EXISTITZEN BADA
+WebServer->Erabiltzailea: eskaeraKudeatu(onartuDa, erabiltzaileID)
+alt ESKAERA ONARTZEN DA
+Erabiltzailea->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "UPDATE Laguna SET onartua = 'bai' WHERE \n (erabiltzaile1 = self.username AND erabiltzaile2 = erabiltzaileID) \n OR \n (erabiltzaile1 = erabiltzaileID AND erabiltzaile2 = self.username)"
+else ESKAERA EZ DA ONARTZEN
+Erabiltzailea->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "DELETE FROM Laguna WHERE \n onartua = 'ez' AND (erabiltzaile1 = self.username AND erabiltzaile2 = erabiltzaileID) \n OR \n (erabiltzaile1 = erabiltzaileID AND erabiltzaile2 = self.username)"
+end
+end

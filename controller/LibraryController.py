@@ -173,7 +173,7 @@ class LibraryController:
                           (kID, lID,))
 
     def erabiltzaileBerriaSortu(self, eIzena, izenAbizenak, pasahitza, nan,
-                                                         tel, pElek, helb, argazkia, administratzaileaDa):
+                                                                            tel, pElek, helb, argazkia, administratzaileaDa):
         erabiltzaileak = db.select("SELECT count(erabiltzaileizena) FROM Erabiltzailea WHERE erabiltzaileizena = ?", (eIzena,))[0][0]
         if erabiltzaileak == 0:
             db.insert("INSERT INTO Erabiltzailea VALUES (?,?,?,?,?,?,?,?,?)",
