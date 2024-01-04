@@ -9,34 +9,35 @@ class TestLogin(BaseTestClass):
 		self.assertNotIn('token', ''.join(res.headers.values()))
 		self.assertNotIn('time', ''.join(res.headers.values()))
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertIsNotNone(page.find('form').find('input', type='email'))
-		self.assertIsNotNone(page.find('form').find('input', type='password'))
+		self.assertIsNotNone(page.find('form').find('input', id='erabiltzaileID'))
+		self.assertIsNotNone(page.find('form').find('input', id='password'))
 		self.assertIsNotNone(page.find('form').find('button', type='submit'))
 
 	def test_login_success(self):
-		res = self.login('jhon@gmail.com', '123')
+		res = self.login('inigoduenas', 'inigoduenas')
 		self.assertEqual(302, res.status_code)
-		self.assertEqual('/', res.location)
+		self.assertEqual('/perfila', res.location)
 		self.assertIn('token', ''.join(res.headers.values()))
 		self.assertIn('time', ''.join(res.headers.values()))
 		token = [x.split("=")[1].split(";")[0] for x in res.headers.values() if 'token' in x][0]
 		time = float([x.split("=")[1].split(";")[0] for x in res.headers.values() if 'time' in x][0])
-		res = self.db.select(f"SELECT user_id FROM Session WHERE session_hash='{token}' AND last_login={time}")
+		res = self.db.select(f"SELECT erabiltzaileizena FROM Saioa WHERE hash='{token}' AND data={time}")
 		self.assertEqual(1, len(res))
-		self.assertEqual(2, res[0][0])
+		self.assertEqual('inigoduenas', res[0][0])
 		res2 = self.client.get('/')
 		page = BeautifulSoup(res2.data, features="html.parser")
-		self.assertEqual('Jhon Doe', page.find('header').find('ul').find_all('li')[-2].get_text())
+		self.assertEqual('inigoduenas', page.find('header').find('ul').find_all('li')[-3].get_text())
+		self.irten()
 
 	def test_login_failure(self):
-		res = self.login('jhon@gmail.com', 'badpassword')
+		res = self.login('inigoduenas', 'badpassword')
 		self.assertEqual(302, res.status_code)
 		self.assertEqual('/login', res.location)
 		self.assertNotIn('token', ''.join(res.headers.values()))
 		self.assertNotIn('time', ''.join(res.headers.values()))
 
 	def test_log_out(self):
-		res = self.login('numen_0', 'calvo')
+		res = self.login('inigoduenas', 'inigoduenas')
 		self.assertEqual(302, res.status_code)
 		self.assertEqual('/perfila', res.location)
 		res2 = self.client.get('/')
@@ -48,5 +49,3 @@ class TestLogin(BaseTestClass):
 		res4 = self.client.get('/')
 		self.assertNotIn('token', ''.join(res4.headers.values()))
 		self.assertNotIn('time', ''.join(res4.headers.values()))
-
-
