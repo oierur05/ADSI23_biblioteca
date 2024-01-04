@@ -34,7 +34,7 @@ class TestErreseina(BaseTestClass):
 		# 			2. liburua erreseina aldatu
 		# http://127.0.0.1:5000/liburua?testua=1&balorazioa=2&erreseinaegin=erreseinaegin&liburuid=1
 		liburua = {
-			'izenburua': "El Principe de la Niebla"
+			'titulua': "El Principe de la Niebla"
 		}
 		erreseina = {
 			'testua': "oso ona",
@@ -62,5 +62,5 @@ class TestErreseina(BaseTestClass):
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/catalogue', query_string=liburua)
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 10")]))
+		self.assertEqual(2, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 10")]))
 		self.irten()
