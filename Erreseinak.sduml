@@ -1,0 +1,21 @@
+title Erreseina Egin
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Liburua bueltatzean erabiltzaileak \n "Erreseina Egin" botoian klik egin
+WebServer->LibraryController: erreseinaEguneratu(erabiltzaileID, liburuID, \n puntuazioa, testua)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT * from Erreseina WHERE \n erabiltzaileizena = erabiltzaileID AND liburuID = liburuID"
+alt EZ DAGO ERRESEINA
+LibraryController->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "INSERT INTO Erreseina (erabiltzaileizena,liburuid,puntuazioa,testua,likeKopurua) \n VALUES (erabiltzaileID, liburuID, puntuazioa, testua, 0)"
+else ERRESEINA DAGO
+LibraryController->DatuBasea: exeqSQL(k3)
+note over DatuBasea: k3: "UPDATE Erreseina SET puntuazioa = puntuazioa, testua = testua \n WHERE erabiltzaileizena = erabiltzaileIzena AND liburuID = liburuID"
+end
+
+

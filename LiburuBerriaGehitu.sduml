@@ -1,0 +1,20 @@
+title Liburu Berria Gehitu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+database DatuBasea
+
+Aktorea->WebServer: Administratzaileak "liburu berria sortu" \nbotoian klik egiten du
+WebServer->LibraryController: liburuBerriaGehitu(portada, \nizenburua, urtea, idazlea, sinopsia, PDF)
+LibraryController->DatuBasea: exeqSQL(k1)
+note over DatuBasea: k1: "SELECT count(liburuid) FROM Liburua WHERE \nizenburua = izenburua AND urtea = urtea AND idazlea = idazlea",
+alt LIBURUA EZ BADAGO SARTUTA
+LibraryController->LibraryController: idBerria(idLista) *LIBURU
+LibraryController->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "INSERT INTO Liburua \nVALUES(lID,portada,izenburua,urtea,idazlea,sinopsia,PDF)"
+LibraryController->LibraryController: idBerria(idLista) *KOPIALIBURU
+LibraryController->DatuBasea: exeqSQL(k3)
+note over DatuBasea: k3: "INSERT INTO Kopiafisikoa VALUES(kID,lID)"
+end

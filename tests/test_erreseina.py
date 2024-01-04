@@ -16,15 +16,16 @@ class TestErreseina(BaseTestClass):
 		liburua = {
 			'titulua': "El Principe de la Niebla"
 		}
-		erabiltzaileID = 'inigoduenas'
-		self.sartu(erabiltzaileID, 'inigoduenas')
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juanbelio')
 		res = self.client.get('/catalogue', query_string=liburua)
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
-		print(page.find('div', class_='row').find_all("h5", class_="card-title"))
+		print(db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("26903",))[0][0])
+		print([i for i in page.find_all("h5", class_="card-title")])
 		self.assertEqual(
 			db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("26903",))[0][0],
-			len(page.find('div', class_='row').find_all("h5", class_="card-title")) - 1)
+			len([i for i in page.find_all("h5", class_="card-title")]))
 		self.irten()
 
 	def test_erreseina_egin_editatu(self):
@@ -33,7 +34,7 @@ class TestErreseina(BaseTestClass):
 		# 			2. liburua erreseina aldatu
 		# http://127.0.0.1:5000/liburua?testua=1&balorazioa=2&erreseinaegin=erreseinaegin&liburuid=1
 		liburua = {
-			'titulua': "El Principe de la Niebla"
+			'izenburua': "El Principe de la Niebla"
 		}
 		erreseina = {
 			'testua': "oso ona",
@@ -43,24 +44,23 @@ class TestErreseina(BaseTestClass):
 		}
 		erreseina_editatuta = {
 			'testua': "Bikaina",
-			'balorazioa': "9",
+			'balorazioa': "10",
 			'erreseinaegin': "erreseinaegin",
 			'liburuid': "26903"
 		}
-		erabiltzaileID = 'inigoduenas'
-		self.sartu(erabiltzaileID, 'inigoduenas')
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juanbelio')
 		# [1]
 		res = self.client.get('/liburua', query_string=erreseina)
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/catalogue', query_string=liburua)
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len([i for i in page.find('div', class_='row')
-								.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 8")]))
+		print(page.find_all("h5", class_="card-title"))
+		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 8")]))
 		# [2]
 		res = self.client.get('/liburua', query_string=erreseina_editatuta)
 		self.assertEqual(200, res.status_code)
 		res = self.client.get('/catalogue', query_string=liburua)
 		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len([i for i in page.find('div', class_='row')
-								.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 9")]))
+		self.assertEqual(1, len([i for i in page.find_all("h5", class_="card-title") if i.text.__contains__("Puntuazioa: 10")]))
 		self.irten()

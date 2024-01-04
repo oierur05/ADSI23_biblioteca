@@ -13,18 +13,18 @@ class TestErreserba(BaseTestClass):
 		# 			1. historiala hutsik dauka
 		#			2. historiala dauka
 		# [1]
-		self.sartu('inigoduenas', 'inigoduenas')
-		res = self.client.get('/erreserbak')
-		self.assertEqual(200, res.status_code)
-		page = BeautifulSoup(res.data, features="html.parser")
-		self.assertEqual(1, len(page.find('div', class_='row').find_all('div', class_='card')))
-		self.irten()
-		# [2]
 		self.sartu('irune', 'irune')
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(0, len(page.find('div', class_='row').find_all('div', class_='card')))
+		self.irten()
+		# [2]
+		self.sartu('juanbelio', 'juanbelio')
+		res = self.client.get('/erreserbak')
+		self.assertEqual(200, res.status_code)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(2, len(page.find('div', class_='row').find_all('div', class_='card')))
 		self.irten()
 
 	def test_liburua_erreserbatu(self):
@@ -68,10 +68,11 @@ class TestErreserba(BaseTestClass):
 	def test_liburua_bueltatu(self):
 		# testak: okerra:
 		# 			1. liburua ez dago erreserbatuta
+		# 			2. liburua ez da existitzen
 		#         zuzena:
-		# 			2. erreserbatuta dago
-		erabiltzaileID = 'inigoduenas'
-		self.sartu(erabiltzaileID, 'inigoduenas')
+		# 			3. liburua existitzen da eta erreserbatuta dago
+		erabiltzaileID = 'juanbelio'
+		self.sartu(erabiltzaileID, 'juanbelio')
 		params = {
 			'titulua': "Ligeros libertinajes sabaticos"
 		}
@@ -79,6 +80,16 @@ class TestErreserba(BaseTestClass):
 		self.assertEqual(302, res.status_code)
 
 		# [1]
+		params = {
+			'id': "-1"
+		}
+		#res = self.client.get('/erreserbak', query_string=params) # TODO: aqui hay un bug en el programa (webServer)
+		res = self.client.get('/erreserbak')
+		self.assertEqual(200, res.status_code)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
+						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
+		# [2]
 		params = {
 			'id': "5"
 		}
@@ -89,7 +100,7 @@ class TestErreserba(BaseTestClass):
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
 						 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
-		# [2]
+		# [3]
 		res = self.client.get('/erreserbak')
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")

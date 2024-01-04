@@ -1,0 +1,22 @@
+title Liburua Erreserbatu
+
+actor Aktorea
+
+participant WebServer
+participant LibraryController
+participant Liburua
+database DatuBasea
+
+
+Aktorea -> WebServer: Liburuen katalogoan egonda, klik egin erreserbatu botoian
+WebServer->LibraryController: getLiburuak(self, hitzGako)
+LibraryController->DatuBasea: exeqSQL (k1)
+note over DatuBasea: k1: "SELECT * from Liburua WHERE \n liburuID LIKE hitzGako \n OR izenburua LIKE hitzGako \n OR urtea LIKE hitzGako \n OR idazlea LIKE hitzGako \n OR sinopsia LIKE hitzGako"
+LibraryController<--DatuBasea: JSON1
+note over LibraryController: JSON1: \n {\n id:int \n portada:String \n izenburua:String \n urtea:int \n idazlea:String \n sinopsia:String \n PDF:String \n }
+LibraryController->Liburua: new(id,portada,izenburua,urtea,idazlea,sinopsia,PDF)
+LibraryController<--Liburua: Liburua
+WebServer<--LibraryController: Liburua
+WebServer->Liburua: erreserbatu(erabiltzaileID)
+Liburua->DatuBasea: exeqSQL(k2)
+note over DatuBasea: k2: "INSERT INTO Erreserba VALUES \n(liburuid, erabiltzaileID, now, end,)"

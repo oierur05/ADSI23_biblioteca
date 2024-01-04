@@ -29,8 +29,8 @@ cur.execute("""
 	)
 """)
 
-#cur.execute("""DELETE FROM Liburua WHERE liburuid > 5 and liburuid < 17""")
-#con.commit()
+# cur.execute("DELETE FROM Erreserba WHERE kopiafisikoid = 2")
+# con.commit()
 
 cur.execute("""
 	CREATE TABLE IF NOT EXISTS Laguna(
