@@ -49,7 +49,7 @@ class TestForoa(BaseTestClass):
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
         print(page.find_all('h5', class_='card-title'))
-        self.assertEqual(4, len(page.find_all('h5', class_='card-title')))
+        self.assertEqual(5, len(page.find_all('h5', class_='card-title')))
         self.irten()
 
         self.sartu('irune', 'irune')
@@ -57,7 +57,7 @@ class TestForoa(BaseTestClass):
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
         print(page.find_all('h5', class_='card-title'))
-        self.assertEqual(5, len(page.find_all('h5', class_='card-title')))
+        self.assertEqual(6, len(page.find_all('h5', class_='card-title')))
         db.select("DELETE FROM MEZUA WHERE erabiltzaileizena = ? AND foroid = ? AND testua = ?", ("irune", 48570, "Agur!"))
         self.irten()
 
