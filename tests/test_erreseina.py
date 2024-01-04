@@ -25,7 +25,7 @@ class TestErreseina(BaseTestClass):
 		print([i for i in page.find_all("h5", class_="card-title")])
 		self.assertEqual(
 			db.select("SELECT count() FROM Erreseina WHERE liburuid = ?", ("26903",))[0][0],
-			len([i for i in page.find_all("h5", class_="card-title")])-1)
+			len([i for i in page.find_all("h5", class_="card-title")]))
 		self.irten()
 
 	def test_erreseina_egin_editatu(self):
