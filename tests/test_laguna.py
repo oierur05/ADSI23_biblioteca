@@ -26,6 +26,7 @@ class TestLagunak(BaseTestClass):
 		res2 = self.client.get('/')
 		page = BeautifulSoup(res2.data, features="html.parser")
 		self.assertEqual('inigoduenas', page.find('header').find('ul').find_all('li')[-3].get_text())
+		self.irten()
 
 	def test_login_failure(self):
 		res = self.login('inigoduenas', 'badpassword')
