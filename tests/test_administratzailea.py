@@ -52,6 +52,24 @@ class TestAdministratzailea(BaseTestClass):
         self.assertEqual(1, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])
 
         db.select("DELETE FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))
+
+        # informazio hutsa edo desegokia dago
+        params2 = {
+            'izenabizen': "ikert",
+            'argazkia': "",
+            'nan': "12345678-A",
+            'telefonoa': 678678678,
+            'helbidea': "Bilbao",
+            'posta': "iker@iker.com",
+            'erabIzena': "iker",
+            'pasahitza': "su",
+            'admin': False
+        }
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("ikert",))[0][0])
+        res = self.client.get('/erabSortu', query_string=params2)
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("ikert",))[0][0])
+
         self.irten()
 
     def test_erabiltzailea_ezabatu(self):
@@ -62,6 +80,9 @@ class TestAdministratzailea(BaseTestClass):
         params = {
             'erabIzena': "iker"
         }
+        params2 = {
+            'erabIzena': "ikert"
+        }
 
         db.insert("INSERT INTO ERABILTZAILEA(izenabizenak, erabiltzaileizena, pasahitza) VALUES(?,?,?)", ("Iker", "iker", "iker"))
 
@@ -70,3 +91,8 @@ class TestAdministratzailea(BaseTestClass):
         res = self.client.get('/erabEzabatu', query_string=params)
         self.assertEqual(302, res.status_code)
         self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("iker",))[0][0])
+
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("ikert",))[0][0])
+        res = self.client.get('/erabEzabatu', query_string=params2)
+        self.assertEqual(302, res.status_code)
+        self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("ikert",))[0][0])
