@@ -58,20 +58,6 @@ class TestErreserba(BaseTestClass):
 
 		db.delete("DELETE FROM Erreserba WHERE erabiltzaileizena = ?",
 				  ("inigoduenas",))
-
-		#res = self.client.get('/erreserbak')
-		#self.assertEqual(200, res.status_code)
-		#page = BeautifulSoup(res.data, features="html.parser")
-		#lid = page.find('h5', class_='card-title')
-		#params = {
-		#	'id': str(lid.text.split()[-1])
-		#}
-		#res = self.client.get('/erreserbak', query_string = params)
-		#self.assertEqual(200, res.status_code)
-		#res = self.client.get('/erreserbak')
-		#page = BeautifulSoup(res.data, features="html.parser")
-		#self.assertEqual(db.select("SELECT count() FROM Erreserba WHERE erabiltzaileizena = ?", (erabiltzaileID,))[0][0],
-		#				 len(page.find('div', class_='row').find_all('div', class_='card-body'))//2)
 		self.irten()
 
 	def test_liburua_bueltatu(self):
