@@ -96,3 +96,5 @@ class TestAdministratzailea(BaseTestClass):
         res = self.client.get('/erabEzabatu', query_string=params2)
         self.assertEqual(302, res.status_code)
         self.assertEqual(0, db.select("SELECT Count() FROM ERABILTZAILEA WHERE erabiltzaileizena = ?", ("ikert",))[0][0])
+
+        self.irten()

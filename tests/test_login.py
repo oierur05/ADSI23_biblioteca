@@ -22,6 +22,7 @@ class TestLogin(BaseTestClass):
 		token = [x.split("=")[1].split(";")[0] for x in res.headers.values() if 'token' in x][0]
 		time = float([x.split("=")[1].split(";")[0] for x in res.headers.values() if 'time' in x][0])
 		res = self.db.select(f"SELECT erabiltzaileizena FROM Saioa WHERE hash='{token}' AND data={time}")
+		print
 		self.assertEqual(1, len(res))
 		self.assertEqual('inigoduenas', res[0][0])
 		res2 = self.client.get('/')
