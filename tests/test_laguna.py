@@ -28,6 +28,18 @@ class TestLagunak(BaseTestClass):
 			'eskBidali': "irune"
 		}
 
+		params7 = {
+			'lagunIzena': "erabiltzaile hau ez da existitzen"
+		}
+		# exititzen ez den erabiltzailea bilatu
+		self.sartu('irune', 'irune')
+		res = self.client.get('/lagunak', query_string=params7)
+		self.assertEqual(200, res.status_code)
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.assertEqual(2, len(page.find_all('h5', class_='card-title')))
+		page = BeautifulSoup(res.data, features="html.parser")
+		self.irten()
+
 		# erabiltzailea existitzen da, ez da zure laguna eta ez zara zu
 		eskaerak1 = db.select("SELECT count() FROM LAGUNA WHERE (erabiltzaile1 = ? AND erabiltzaile2 = ?)",
 					  ('irune','ikertranchand'))[0][0]
@@ -97,18 +109,20 @@ class TestLagunak(BaseTestClass):
 			('irune', 'ikertranchand'))
 
 	def test_eskaerak_kontsultatu(self):
-		params1 = {
+		erabiltzaileaBilatu2 = {
 			'lagunIzena': "ikertranchand"
 		}
-		params2 = {
+		eskaeraErabiltzailea = {
 			'eskBidali': "ikertranchand"
 		}
 		self.sartu('irune', 'irune')
-		res = self.client.get('/lagunak', query_string=params1)
+
+		res = self.client.get('/lagunak', query_string=erabiltzaileaBilatu2)
 		self.assertEqual(200, res.status_code)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(3, len(page.find_all('h5', class_='card-title')))
-		res = self.client.get('/lagunak', query_string=params2)
+		# eskaera bidali
+		res = self.client.get('/lagunak', query_string=eskaeraErabiltzailea)
 		page = BeautifulSoup(res.data, features="html.parser")
 		self.assertEqual(2, len(page.find_all('h5', class_='card-title')))
 		eskaerak = db.select("SELECT count() FROM LAGUNA WHERE (erabiltzaile2 = ? AND onartua = ?)",

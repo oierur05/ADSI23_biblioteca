@@ -38,26 +38,45 @@ class TestForoa(BaseTestClass):
         self.irten()
 
     def test_mezua_idatzi(self):
-        # mezu bat forora gehitzea
-        params = {
+        komentario1 = {
             'mezua': "Agur!",
             'foroID': 48570
         }
-
-        self.sartu('irune', 'irune')
+        komentario2 = {
+            'mezua': "",
+            'foroID': 48570
+        }
         res = self.client.get('/foroak?foroID=48570')
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
-        print(page.find_all('h5', class_='card-title'))
-        self.assertEqual(5, len(page.find_all('h5', class_='card-title')))
-        self.irten()
+        mezu_kop = db.select("SELECT count() FROM MEZUA WHERE foroid = ? ", (48570,))[0][0]
+        self.assertEqual(mezu_kop, len(page.find_all('h5', class_='card-title')))
 
+        # erregistratu gabe mezua idatzi
+        res = self.client.get('/foroak?foroID=48570')
+        self.assertEqual(200, res.status_code)
+        res = self.client.get('/foroa', query_string=komentario1)
+        self.assertEqual(302, res.status_code)
+        self.assertEqual('/login', res.location)
+        res = self.client.get('/foroak?foroID=48570')
+        page = BeautifulSoup(res.data, features="html.parser")
+        self.assertEqual(mezu_kop, len(page.find_all('h5', class_='card-title')))
+
+        # mezu bat forora gehitzea
         self.sartu('irune', 'irune')
-        res = self.client.get('/foroa', query_string=params)
+        res = self.client.get('/foroa', query_string=komentario1)
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
-        print(page.find_all('h5', class_='card-title'))
-        self.assertEqual(6, len(page.find_all('h5', class_='card-title')))
-        db.select("DELETE FROM MEZUA WHERE erabiltzaileizena = ? AND foroid = ? AND testua = ?", ("irune", 48570, "Agur!"))
+        self.assertEqual(mezu_kop+1, len(page.find_all('h5', class_='card-title')))
+
+        db.delete("DELETE FROM MEZUA WHERE erabiltzaileizena = ? AND foroid = ? AND testua = ?", ("irune", 48570, "Agur!"))
+
+        # mezu bat forora gehitzea, komentario hutza (mezua == "")
+        res = self.client.get('/foroa', query_string=komentario2)
+        self.assertEqual(302, res.status_code)
+        res = self.client.get('/foroak?foroID=48570')
+        page = BeautifulSoup(res.data, features="html.parser")
+        self.assertEqual(mezu_kop, len(page.find_all('h5', class_='card-title')))
+
         self.irten()
 
