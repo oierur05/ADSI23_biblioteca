@@ -42,7 +42,10 @@ def catalogue():
 	if titulua:
 		Liburua, nb_books = liburuKatalogoanBilatu(titulua)
 		erreseinak = erreseinakIkusi(Liburua[0].id)
-		return render_template('liburua.html', Liburua=Liburua[0], Erreseinak=erreseinak, bueltatu="False")
+		if Liburua == None:
+			return render_template('error.html')
+		else:
+			return render_template('liburua.html', Liburua=Liburua[0], Erreseinak=erreseinak, bueltatu="False")
 	else:
 		izenburua = request.values.get("izenburua", "")
 		page = int(request.values.get("page", 1))
@@ -93,6 +96,8 @@ def lagunak():
 
 		if bisitatu:
 			laguna = erabiltzaileaBilatu(bisitatu)
+			if laguna == None:
+				return render_template('error.html')
 			lagunarenLagunak = lagunakLortu(bisitatu)
 			Erreserbak = erreserbakIkusi(bisitatu)
 			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
@@ -131,6 +136,8 @@ def liburua():
 		#return f"titulua? {titulua}"
 		if titulua:
 			Liburua, nb_books = liburuKatalogoanBilatu(titulua)
+			if Liburua == None:
+				return render_template('error.html')
 			#return f"liburua? {Liburua[0]}"
 			liburuaErreserbatu(Liburua[0].id, user.username)
 			return redirect('/erreserbak')
@@ -139,8 +146,10 @@ def liburua():
 		erabID = request.values.get("erabID", "")
 
 		if like and erabID:
-			erreseinaLikeGehitu(erabID, like)
 			Liburua = liburuaIkusi(like)
+			if Liburua == None:
+				return render_template('error.html')
+			erreseinaLikeGehitu(erabID, like)
 			erreseinak = erreseinakIkusi(like)
 			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
 
@@ -148,14 +157,16 @@ def liburua():
 		testua = request.values.get("testua", "")
 		balorazioa = request.values.get("balorazioa", "")
 
-		if erreseinaegin and testua and balorazioa:
+		if erreseinaegin and balorazioa:
 			if int(balorazioa) > 10:
 				balorazioa = "10"
 			elif int(balorazioa) < 0:
 				balorazioa = "0"
 			liburuid = request.values.get("liburuid", "")
-			erreseinaEgin(user.username, liburuid, balorazioa, testua)
 			Liburua = liburuaIkusi(liburuid)
+			if Liburua == None:
+				return render_template('error.html')
+			erreseinaEgin(user.username, liburuid, balorazioa, testua)
 			erreseinak = erreseinakIkusi(liburuid)
 			return render_template('liburua.html', Liburua=Liburua, Erreseinak=erreseinak, bueltatu="False")
 
@@ -163,6 +174,8 @@ def liburua():
 
 		if bisitatu:
 			laguna = erabiltzaileaBilatu(bisitatu)
+			if laguna == None:
+				return render_template('error.html')
 			lagunarenLagunak = lagunakLortu(bisitatu)
 			Erreserbak = erreserbakIkusi(bisitatu)
 			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
@@ -212,8 +225,10 @@ def erreserbak():
 		resp = render_template('erreserbak.html', Info=Info)
 		id = request.values.get("id", "")
 		if id:
-			liburuaBueltatu(id, user.username)
 			lib = liburuKopiaIkusi(id)
+			if lib == None:
+				return render_template('error.html')
+			liburuaBueltatu(id, user.username)
 			erreseinak = erreseinakIkusi(lib.id)
 			erreseinaEgin(user.username, lib.id, "egin gabe", "")
 			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
@@ -233,6 +248,8 @@ def irakurritakoak():
 		id = request.values.get("id", "")
 		if id:
 			lib = liburuaIkusi(id)
+			if lib == None:
+				return render_template('error.html')
 			erreseinak = erreseinakIkusi(id)
 			erreseinaEgin(user.username, id, "egin gabe", "")
 			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")
@@ -253,8 +270,10 @@ def foroa():
 		foroID = request.values.get("foroID", "")
 		mezua = request.values.get("mezua", "")
 		if foroID and mezua:
-			komentatuForoan(foroID, mezua, user.username)
 			Foroa = ikusiForoa(foroID)
+			if Foroa == None:
+				return render_template('error.html')
+			komentatuForoan(foroID, mezua, user.username)
 			Mezuak = ikusiForoarenMezuak(foroID)
 			return render_template('foroa.html', Foroa=Foroa, Mezuak=Mezuak)
 
@@ -262,6 +281,8 @@ def foroa():
 
 		if bisitatu:
 			laguna = erabiltzaileaBilatu(bisitatu)
+			if laguna == None:
+				return render_template('error.html')
 			lagunarenLagunak = lagunakLortu(bisitatu)
 			Erreserbak = erreserbakIkusi(bisitatu)
 			Liburua = [liburuKopiaIkusi(e.liburuID) for e in Erreserbak]
@@ -312,6 +333,8 @@ def foroak():
 		return resp
 	elif foroID:
 		Foroa = ikusiForoa(foroID)
+		if Foroa == None:
+			return render_template('error.html')
 		Mezuak = ikusiForoarenMezuak(foroID)
 		return render_template('foroa.html', Foroa=Foroa, Mezuak=Mezuak)
 	else:
@@ -441,6 +464,8 @@ def perfila():
 		id = request.values.get("id", "")
 		if id:
 			lib = liburuaIkusi(id)
+			if lib == None:
+				return render_template('error.html')
 			erreseinak = erreseinakIkusi(id)
 			erreseinaEgin(user.username, id, "egin gabe", "")
 			return render_template('liburua.html', Liburua=lib, Erreseinak=erreseinak, bueltatu="True")

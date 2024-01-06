@@ -21,12 +21,6 @@ class User:
 	def __str__(self):
 		return f"{self.username}"
 
-	def new_session(self):
-		now = float(datetime.datetime.now().time().strftime("%Y%m%d%H%M%S.%f"))
-		session_hash = hash_password(str(self.username)+str(now))
-		db.insert("INSERT INTO Saioa VALUES (?, ?, ?)", (session_hash, self.username, now))
-		return Session(session_hash, now)
-
 	def validate_session(self, session_hash):
 		s = db.select("SELECT * from Saioa WHERE erabiltzaileizena = ? AND hash = ?", (self.username, session_hash))
 		if len(s) > 0:
